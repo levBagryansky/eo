@@ -49,7 +49,11 @@
   #  - start position in which match was found
   #  - matched string
   #  - array of identified matched groups
-  [txt] > match /array
+  [txt] > match
+    text txt > string_text
+    text r > regex_text
+    regex_text.index-of "/" > first_slash
+    regex_text.index-of "/" > last_slash
 
   # Matches
   [txt] > matches
