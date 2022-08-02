@@ -25,7 +25,6 @@
 +version 0.0.0
 +alias org.eolang.hamcrest.assert-that
 +alias org.eolang.txt.regex
-+alias org.eolang.collections.list
 +junit
 
 [] > check-regex-compile-error-msg-missing-slash
