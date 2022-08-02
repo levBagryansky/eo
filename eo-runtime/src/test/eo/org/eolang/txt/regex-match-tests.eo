@@ -41,13 +41,20 @@
     TRUE
     $.equal-to TRUE
 
-regex "/qwert" > m_regex
-#  match "string" > m_match
+[] > regex_txt_print
+  QQ.io.stdout > @
+    QQ.txt.sprintf
+      "AAAAAAAAAAAAAAAAAAAA regex_txt = %s\n"
+      regex_txt.
+        match.
+          compile.
+            regex "/([a-z]+[a]*)/i"
+          "hello"
 
 [] > slashes
   QQ.io.stdout > @
     QQ.txt.sprintf
-      "AAAAAAAAAAAAAAAAAAAA first = %d, last = %d\nregex_text = %s"
+      "AAAAAAAAAAAAAAAAAAAA first = %d, last = %d\nregex_with_options = %s\n"
       first_slash.
         match.
           compile.
@@ -58,8 +65,14 @@ regex "/qwert" > m_regex
           compile.
             regex "/([a-z]+)/i"
           "hello"
-      regex_text.
+      regex_with_options.
         match.
           compile.
-            regex "/([a-z]+)/i"
+            regex "/([a-z]+)/id"
           "hello"
+
+[] > check_symbol_i
+  "qwerty" > my_str
+  assert-that > @
+    my_str.slice 0 1
+    $.equal-to "q"
