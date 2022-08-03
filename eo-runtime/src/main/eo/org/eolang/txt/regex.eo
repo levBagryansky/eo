@@ -68,13 +68,18 @@
     #Non-deterministic finite automation
     [transitions final_states s0 max_state] > nfa
 
-    #Non-deterministic finite automation crating by a symbol
+    #Non-deterministic finite automata for "a" sym
     [a] > nfa_by_sym
       nfa > @
-        (map *).with (pair 0 a) 1
-        * 1
-        0
-        1
+        (map *).with (pair (memory 0) a) (memory 1)
+        * (memory 0)
+        memory 0
+        memory 1
+
+    #Non-deterministic finite automata concatenating nfa1 & nfa2
+    [nfa1 nfa2] > nfa_by_mul
+      seq > @
+        # increase all states by 1
 
   # Matches
   [txt] > matches
