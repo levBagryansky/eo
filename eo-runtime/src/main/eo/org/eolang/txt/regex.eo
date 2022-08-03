@@ -50,11 +50,7 @@
   #  - matched string
   #  - array of identified matched groups
   [txt] > match
-    text txt > string_text
-    text r > regex_with_options
-    regex_with_options.index-of "/" > first_slash
-    regex_with_options.index-of "/" > last_slash
-    regex_with_options.slice > regex_txt
+    r.slice > regex_txt
       plus. 2
         regex_with_options.index-of ")"
       minus. 0
