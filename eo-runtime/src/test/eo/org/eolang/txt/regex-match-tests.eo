@@ -59,8 +59,13 @@
             regex "/([a-z]+[a]*)/i"
           "hello"
 
-[] > check_symbol_i
-  "qwerty" > my_str
+[] > nfa_by_sym_check
   assert-that > @
-    my_str.slice 0 1
-    $.equal-to "q"
+    max_state.
+      nfa_by_sym.
+        match.
+          compile.
+            regex "/([a-z]+[a]*)/i"
+          "hello"
+        "b"
+    $.equal-to 1

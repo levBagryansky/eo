@@ -24,6 +24,7 @@
 +home https://github.com/objectionary/eo
 +version 0.0.0
 +alias org.eolang.collections.list
++alias org.eolang.collections.map
 +alias org.eolang.txt.text
 +rt jvm org.eolang:eo-runtime:0.0.0
 
@@ -50,7 +51,9 @@
   #  - matched string
   #  - array of identified matched groups
   [txt] > match
-    r.slice > regex_txt
+    text r > regex_with_options
+
+    regex_with_options.slice > regex_txt
       plus. 2
         regex_with_options.index-of ")"
       minus. 0
@@ -58,6 +61,20 @@
           plus. 3
             regex_with_options.index-of ")"
           regex_with_options.length
+
+    # pair object
+    [a b] > pair
+
+    #Non-deterministic finite automation
+    [transitions final_states s0 max_state] > nfa
+
+    #Non-deterministic finite automation crating by a symbol
+    [a] > nfa_by_sym
+      nfa > @
+        (map *).with (pair 0 a) 1
+        * 1
+        0
+        1
 
   # Matches
   [txt] > matches
