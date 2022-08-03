@@ -41,34 +41,22 @@
     TRUE
     $.equal-to TRUE
 
-[] > regex_txt_print
+[] > regex_with_options
   QQ.io.stdout > @
     QQ.txt.sprintf
-      "AAAAAAAAAAAAAAAAAAAA regex_txt = %s\n"
+      "HEY, Regex_with_options = %s\n"
+      r.
+        compile.
+          regex "/([a-z]+)/id"
+
+[] > regex_txt
+  QQ.io.stdout > @
+    QQ.txt.sprintf
+      "HEY, Regex_txt = %s\n"
       regex_txt.
         match.
           compile.
             regex "/([a-z]+[a]*)/i"
-          "hello"
-
-[] > slashes
-  QQ.io.stdout > @
-    QQ.txt.sprintf
-      "AAAAAAAAAAAAAAAAAAAA first = %d, last = %d\nregex_with_options = %s\n"
-      first_slash.
-        match.
-          compile.
-            regex "/([a-z]+)/i"
-          "hello"
-      last_slash.
-        match.
-          compile.
-            regex "/([a-z]+)/i"
-          "hello"
-      regex_with_options.
-        match.
-          compile.
-            regex "/([a-z]+)/id"
           "hello"
 
 [] > check_symbol_i
