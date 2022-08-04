@@ -78,8 +78,6 @@
 
     #Non-deterministic finite automata concatenating nfa1 & nfa2
     [nfa1 nfa2] > nfa_by_mul
-      seq > @
-        # increase all states by 1
 
   # Matches
   [txt] > matches
