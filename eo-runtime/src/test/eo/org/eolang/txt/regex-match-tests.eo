@@ -69,3 +69,14 @@
           "hello"
         "b"
     $.equal-to 1
+
+[] > nfa_by_sym_check1
+  QQ.io.stdout > @
+    QQ.txt.sprintf "Hey, max_state = %d\n"
+      max_state.
+        nfa_by_sym.
+          match.
+            compile.
+              regex "/([a-z]+[a]*)/i"
+            "hello"
+          "b"
