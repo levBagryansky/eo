@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-+alias org.eolang.collections.list
 +alias org.eolang.hamcrest.assert-that
 +alias org.eolang.txt.regex
 +home https://github.com/objectionary/eo
@@ -28,21 +27,12 @@
 +junit
 +version 0.0.0
 
-[] > false_equals
-  assert-that > @
-    matches.
-      compile.
-        regex "/([A-Z]{2})/"
-      "Hello, World!"
-    $.is
-      $.equal-to FALSE
-
-[] > compare_trivial
+[] > r_match_compare_trivial
   assert-that > @
     TRUE
     $.equal-to TRUE
 
-[] > regex_with_options
+[] > r_match_regex_with_options
   QQ.io.stdout > @
     QQ.txt.sprintf
       "HEY, Regex_with_options = %s\n"
@@ -50,7 +40,7 @@
         compile.
           regex "/([a-z]+)/id"
 
-[] > regex_txt
+[] > r_match_regex_txt
   QQ.io.stdout > @
     QQ.txt.sprintf
       "HEY, Regex_txt = %s\n"
@@ -60,7 +50,7 @@
             regex "/([a-z]+[a]*)/i"
           "hello"
 
-[] > nfa_by_sym_check
+[] > r_match_nfa_by_sym_check
   assert-that > @
     max_state.
       nfa_by_sym.
@@ -71,7 +61,7 @@
         "b"
     $.equal-to 1
 
-[] > nfa_by_sym_check1
+[] > r_match_nfa_by_sym_check1
   QQ.io.stdout > @
     QQ.txt.sprintf "Hey, max_state = %d\n"
       max_state.
