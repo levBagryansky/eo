@@ -63,21 +63,27 @@
           regex_with_options.length
 
     # pair object
-    [a b] > pair
+    [first second] > pair
 
     #Non-deterministic finite automation
     [transitions final_states s0 max_state] > nfa
 
-    #Non-deterministic finite automata for "a" sym
-    [a] > nfa_by_sym
+    #Non-deterministic finite automata for symbol
+    [sym] > nfa_by_sym
       nfa > @
-        (map *).with (pair (memory 0) a) (memory 1)
-        * (memory 0)
+        (map *).with (pair (memory 0) sym) (memory 1)
+        * (memory 1)
         memory 0
         memory 1
 
     #Non-deterministic finite automata concatenating nfa1 & nfa2
-    [nfa1 nfa2] > nfa_by_mul
+    [nfa1 nfa2] > nfa_by_and
+
+    #Non-deterministic finite automata for nfa1 || nfa1
+    [nfa1 nfa2] > nfa_by_or
+
+    #Non-deterministic finite automata for nfa1*
+    [nfa1] > nfa_with_star
 
   # Matches
   [txt] > matches
