@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 +alias org.eolang.collections.list
-+alias org.eolang.collections.map
++alias org.eolang.collections.multimap
 +alias org.eolang.txt.text
 +home https://github.com/objectionary/eo
 +package org.eolang.txt
@@ -64,20 +64,47 @@
 
     # pair object
     [first second] > pair
+      plus. > as-hash
+        second.as-hash
+        first.as-hash.times 100
 
     #Non-deterministic finite automation
     [transitions final_states s0 max_state] > nfa
+      [num] > increase_states
+        seq > @
+          transitions.keys.each
+            [key_i]
+              seq > @
+                QQ.io.stdout
+                  QQ.txt.sprintf
+                    "QWERTY Hello! arr[0] = %d\n"
+                    found.
+                      transitions
+                      key_i
+                key_i.first.write
+                  plus.
+                    num
+                    key_i.first
+          s0.write
+            s0.plus num
+          max_state.write
+            max_state.plus num
+          ^
 
     #Non-deterministic finite automata for symbol
     [sym] > nfa_by_sym
       nfa > @
-        (map *).with (pair (memory 0) sym) (memory 1)
+        (multimap *).with (pair (memory 0) sym) (memory 1)
         * (memory 1)
         memory 0
         memory 1
 
     #Non-deterministic finite automata concatenating nfa1 & nfa2
     [nfa1 nfa2] > nfa_by_and
+      nfa1.transitions.keys.each > @
+        [key_i]
+          seq > @
+            TRUE
 
     #Non-deterministic finite automata for nfa1 || nfa1
     [nfa1 nfa2] > nfa_by_or

@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
++alias org.eolang.collections.multimap
 +alias org.eolang.hamcrest.assert-that
 +alias org.eolang.txt.regex
 +home https://github.com/objectionary/eo
@@ -71,3 +72,26 @@
               regex "/([a-z]+[a]*)/i"
             "hello"
           "b"
+
+[] > r_match_print_each
+  [first second] > pair
+    plus. > as-hash
+      second.as-hash
+      first.as-hash.times 100
+  (multimap *).with > mmp
+    pair (memory 7) "A"
+    memory 1
+  mmp.keys.each > @
+    [key_i]
+      QQ.io.stdout > @
+        QQ.txt.sprintf
+          "Hello, i = %d\n"
+          key_i.first
+
+[] > r_match_print_increased_mmp
+  regex.match.nfa_by_sym "b" > my_nfa!
+  my_nfa.increase_states 5 > increased
+  QQ.io.stdout > @
+    QQ.txt.sprintf
+      "Max_state = %d\n"
+      increased.max_state
