@@ -88,10 +88,8 @@
           "Hello, i = %d\n"
           key_i.first
 
-[] > r_match_print_increased_mmp
-  regex.match.nfa_by_sym "b" > my_nfa!
-  my_nfa.increase_states 5 > increased
+[] > r_match_array_by_len_elem
   QQ.io.stdout > @
     QQ.txt.sprintf
-      "Max_state = %d\n"
-      increased.max_state
+      "Hello, len of new arr = %d\n"
+      (regex.match.array_by_len_elem 7 6).length
