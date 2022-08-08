@@ -81,10 +81,6 @@
             src.plus num
           dest.write
             dest.plus num
-          transition
-            sym
-            src
-            dest
 
     #Non-deterministic finite automation
     [transitions final_states s0 max_state] > nfa
@@ -92,7 +88,12 @@
         seq > @
           transitions.each
             [tr]
-              tr.increase_by num
+              tr.increase_by > @
+                num
+          final_states.each
+            [state_i]
+              state_i.write > @
+                state_i.plus num
           s0.write
             s0.plus num
           max_state.write
@@ -102,14 +103,17 @@
     #Non-deterministic finite automata for symbol
     [sym] > nfa_by_sym
       nfa > @
-        (list *).with:transitions
-          transition
-            sym
-            memory 0
-            memory 1
+        list:transitions
+          (list *).with
+            transition
+              sym
+              memory 0
+              memory 1
         list:final_states
-          *
-          (memory 1)
+          with.
+            list
+              *
+            memory 1
         memory:s0
           0
         memory:max_state
@@ -117,10 +121,6 @@
 
     #Non-deterministic finite automata concatenating nfa1 & nfa2
     [nfa1 nfa2] > nfa_by_and
-      nfa1.transitions.keys.each > @
-        [key_i]
-          seq > @
-            TRUE
 
     #Non-deterministic finite automata for nfa1 || nfa1
     [nfa1 nfa2] > nfa_by_or

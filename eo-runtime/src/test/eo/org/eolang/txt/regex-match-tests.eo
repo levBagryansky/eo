@@ -98,16 +98,20 @@
     "b"
     memory 0
     memory 1
+  seq > @
+    tr0.increase_by 5
+    QQ.io.stdout
+      QQ.txt.sprintf
+        "Hello, src0 = %d, dest0 = %d\n"
+        tr0.src
+        tr0.dest
 
-  tr0.increase_by 5 > tr1
+[] > r_match_print_increase_states
+  regex.match.nfa_by_sym "b" > my_nfa!
+  my_nfa.increase_states 5 > increased
   seq > @
     QQ.io.stdout
       QQ.txt.sprintf
-        "Hello, src1 = %d, dest1 = %d\n    src1 = %d, dest0 = %d\n"
-        tr1.src
-        tr1.dest
-        tr0.src
-        tr0.dest
-    assert-that
-      tr1.src
-      $.equal-to 5
+        "Max_state = %d, s0 = %d\n"
+        increased.max_state
+        increased.s0
