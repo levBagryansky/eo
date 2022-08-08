@@ -67,30 +67,30 @@
         second.as-hash
         first.as-hash.times 100
 
-    [len elem] > array_by_len_elem
+    # give a list with length len and elems
+    [len elem] > list_by_len_elem
       if. > @
         len.lte 0
-        *
-        (array_by_len_elem (len.minus 1) elem).with elem
+        list *
+        (list_by_len_elem (len.minus 1) elem).with elem
+
+    [sym src dest] > transition
+      [num] > increase_by_num
+        seq > @
+          src.write
+            src.plus num
+          dest.write
+            dest.plus num
 
     #Non-deterministic finite automation
-    #Transitions' structure: *(sym *) Where index of element matches to number of state
     [transitions final_states s0 max_state] > nfa
       [num] > increase_states
         seq > @
-          transitions.keys.each
-            [key_i]
-              seq > @
-                QQ.io.stdout
-                  QQ.txt.sprintf
-                    "QWERTY Hello! arr[0] = %d\n"
-                    found.
-                      transitions
-                      key_i
-                key_i.first.write
-                  plus.
-                    num
-                    key_i.first
+          list_by_len_elem > new_transitions
+            plus.
+              num
+              max_state
+            memory 0
           s0.write
             s0.plus num
           max_state.write
@@ -100,12 +100,13 @@
     #Non-deterministic finite automata for symbol
     [sym] > nfa_by_sym
       nfa > @
-        (*).with:transitions
-          sym
+        (list *).with:transitions
+          transition
+            sym
+            memory 0
+            memory 1
+        list:final_states
           *
-            memory 2
-          memory 2
-        *:final_states
           (memory 1)
         memory:s0
           0
