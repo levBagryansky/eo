@@ -75,22 +75,24 @@
         (list_by_len_elem (len.minus 1) elem).with elem
 
     [sym src dest] > transition
-      [num] > increase_by_num
+      [num] > increase_by
         seq > @
           src.write
             src.plus num
           dest.write
             dest.plus num
+          transition
+            sym
+            src
+            dest
 
     #Non-deterministic finite automation
     [transitions final_states s0 max_state] > nfa
       [num] > increase_states
         seq > @
-          list_by_len_elem > new_transitions
-            plus.
-              num
-              max_state
-            memory 0
+          transitions.each
+            [tr]
+              tr.increase_by num
           s0.write
             s0.plus num
           max_state.write
