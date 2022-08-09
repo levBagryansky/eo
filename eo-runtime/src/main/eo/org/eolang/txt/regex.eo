@@ -121,7 +121,8 @@
     #Non-deterministic finite automata concatenating nfa1 & nfa2
     [nfa1 nfa2] > nfa_by_and
       seq > @
-        nfa2.increase
+        nfa2.increase_states_by
+          nfa1.max_state
 
     #Non-deterministic finite automata for nfa1 || nfa1
     [nfa1 nfa2] > nfa_by_or
