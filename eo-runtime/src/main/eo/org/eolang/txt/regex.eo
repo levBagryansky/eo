@@ -84,7 +84,7 @@
 
     #Non-deterministic finite automation
     [transitions final_states s0 max_state] > nfa
-      [num] > increase_states
+      [num] > increase_states_by
         seq > @
           transitions.each
             [tr]
@@ -98,7 +98,6 @@
             s0.plus num
           max_state.write
             max_state.plus num
-          ^
 
     #Non-deterministic finite automata for symbol
     [sym] > nfa_by_sym
@@ -121,6 +120,8 @@
 
     #Non-deterministic finite automata concatenating nfa1 & nfa2
     [nfa1 nfa2] > nfa_by_and
+      seq > @
+        nfa2.increase
 
     #Non-deterministic finite automata for nfa1 || nfa1
     [nfa1 nfa2] > nfa_by_or

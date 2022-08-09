@@ -106,12 +106,12 @@
         tr0.src
         tr0.dest
 
-[] > r_match_print_increase_states
+[] > r_match_print_increase_states_by
   regex.match.nfa_by_sym "b" > my_nfa!
-  my_nfa.increase_states 5 > increased
   seq > @
+    my_nfa.increase_states_by 5
     QQ.io.stdout
       QQ.txt.sprintf
         "Max_state = %d, s0 = %d\n"
-        increased.max_state
-        increased.s0
+        my_nfa.max_state
+        my_nfa.s0
