@@ -81,6 +81,23 @@
             src.plus num
           dest.write
             dest.plus num
+      [num] > increased_by
+        transition > @
+          sym
+          src.plus
+            num
+          dest.plus
+            num
+      [x] > eq
+        and. > @
+          eq.
+            sym
+            x.sym
+          and.
+            src.eq
+              x.src
+            dest.eq
+              x.dest
 
     #Non-deterministic finite automation
     [transitions final_states s0 max_state] > nfa
@@ -98,6 +115,19 @@
             s0.plus num
           max_state.write
             max_state.plus num
+
+      [num] > increased_states_by
+        nfa > @
+          transitions.map
+            [tr]
+              tr.increased_by > @
+                num
+          final_states.map
+            [item]
+              item.plus > @
+                num
+          s0.plus num
+          max_state.plus num
 
     #Non-deterministic finite automata for symbol
     [sym] > nfa_by_sym
