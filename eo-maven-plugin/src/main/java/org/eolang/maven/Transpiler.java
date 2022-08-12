@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2022 Yegor Bugayenko
+ * Copyright (c) 2016-2022 Objectionary.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,13 +27,11 @@ import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import com.yegor256.xsline.Shift;
-import com.yegor256.xsline.TrBulk;
 import com.yegor256.xsline.TrClasspath;
 import com.yegor256.xsline.Train;
 import com.yegor256.xsline.Xsline;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 import org.eolang.parser.ParsingTrain;
 
 /**
@@ -89,18 +87,17 @@ final class Transpiler {
                 Save.rel(file), name, Save.rel(target)
             );
         } else {
-            Train<Shift> train = new TrBulk<>(new TrClasspath<>(new ParsingTrain().empty())).with(
-                Arrays.asList(
-                    "/org/eolang/maven/pre/classes.xsl",
-                    "/org/eolang/maven/pre/package.xsl",
-                    "/org/eolang/maven/pre/junit.xsl",
-                    "/org/eolang/maven/pre/rename-junit-inners.xsl",
-                    "/org/eolang/maven/pre/attrs.xsl",
-                    "/org/eolang/maven/pre/varargs.xsl",
-                    "/org/eolang/maven/pre/data.xsl",
-                    "/org/eolang/maven/pre/to-java.xsl"
-                )
-            ).back().back();
+            Train<Shift> train = new TrClasspath<>(
+                new ParsingTrain().empty(),
+                "/org/eolang/maven/pre/classes.xsl",
+                "/org/eolang/maven/pre/package.xsl",
+                "/org/eolang/maven/pre/junit.xsl",
+                "/org/eolang/maven/pre/rename-junit-inners.xsl",
+                "/org/eolang/maven/pre/attrs.xsl",
+                "/org/eolang/maven/pre/varargs.xsl",
+                "/org/eolang/maven/pre/data.xsl",
+                "/org/eolang/maven/pre/to-java.xsl"
+            ).back();
             train = new SpyTrain(train, place.make(this.pre, ""));
             final XML out = new Xsline(train).pass(input);
             new Save(out.toString(), target).saveQuietly();
