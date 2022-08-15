@@ -105,10 +105,34 @@
   regex.match.nfa-by-and > new-nfa!
     my-nfa1
     my-nfa2
+  new-nfa.new-transitions > nt!
   assert-that > @
-    at.
-      new-transitions.
-        new-nfa
-      0
-    $.equal-to
-      regex.match.transition "b" 0 1
+    TRUE
+    $.all-of
+      $.equal-to
+        eq.
+          at.
+            nt
+            0
+          regex.match.transition
+            "a"
+            2
+            3
+      $.equal-to
+        eq.
+          at.
+            nt
+            1
+          regex.match.transition
+            "b"
+            0
+            1
+      $.equal-to
+        eq.
+          at.
+            nt
+            2
+          regex.match.transition
+            ""
+            1
+            2
