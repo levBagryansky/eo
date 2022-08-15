@@ -98,3 +98,17 @@
       0
     $.equal-to
       regex.match.transition "b" 5 6
+
+[] > r_match_new-transitions-check
+  regex.match.nfa_by_sym "b" > my-nfa1!
+  regex.match.nfa_by_sym "a" > my-nfa2!
+  regex.match.nfa-by-and > new-nfa!
+    my-nfa1
+    my-nfa2
+  assert-that > @
+    at.
+      new-transitions.
+        new-nfa
+      0
+    $.equal-to
+      regex.match.transition "b" 0 1

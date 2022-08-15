@@ -150,10 +150,24 @@
           1
 
     #Non-deterministic finite automata concatenating nfa1 & nfa2
-    [nfa1 nfa2] > nfa_by_and
-      seq > @
-        nfa2.increase_states_by
+    [nfa1 nfa2] > nfa-by-and
+      nfa2.increase_states_by > increased-nfa2!
+        plus. 1
           nfa1.max_state
+      [] > new-transitions
+        concat. > @
+          concat.
+            nfa1.transitions
+            increased-nfa2.transitions
+          reduce.
+            nfa1.final_states
+            *
+            [acc item]
+              acc.with > @
+                transition
+                  ""
+                  item
+                  increased-nfa2.s0
 
     #Non-deterministic finite automata for nfa1 || nfa1
     [nfa1 nfa2] > nfa_by_or
