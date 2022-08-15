@@ -119,11 +119,11 @@
 
       [num] > increased_states_by
         nfa > @
-          transitions.map
+          transitions.mapped
             [tr]
               tr.increased_by > @
                 num
-          final_states.map
+          final_states.mapped
             [item]
               item.plus > @
                 num
