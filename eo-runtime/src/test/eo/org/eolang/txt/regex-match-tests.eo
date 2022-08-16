@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
++alias org.eolang.collections.list
 +alias org.eolang.hamcrest.assert-that
 +alias org.eolang.txt.regex
 +home https://github.com/objectionary/eo
@@ -136,3 +137,20 @@
             ""
             1
             2
+
+[] > r_match_eq-transitions
+  list > tr-s1!
+    *
+      regex.match.transition "a" 0 1
+      regex.match.transition "b" 5 6
+  list > tr-s2!
+    *
+      regex.match.transition "b" 5 6
+      regex.match.transition "a" 0 1
+  assert-that > @
+    TRUE
+    $.equal-to
+      eq-transitions.
+        regex.match.nfa.eq
+        tr-s1
+        tr-s2
