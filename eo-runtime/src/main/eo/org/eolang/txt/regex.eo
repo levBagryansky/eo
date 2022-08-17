@@ -129,19 +129,20 @@
                 num
           s0.plus num
           max_state.plus num
+
       [other] > eq
         [transitions1 transitions2] > eq-transitions
-          reduce. > @
+          reducedi. > @
             transitions1
             TRUE
-            [acc item]
+            [acc i item]
               and. > @
+                acc
                 gte.
                   found.
                     transitions2
                     item
                   0
-                acc
 
     #Non-deterministic finite automata for symbol
     [sym] > nfa_by_sym
