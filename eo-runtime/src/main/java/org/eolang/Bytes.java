@@ -21,52 +21,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/*
- * @checkstyle PackageNameCheck (4 lines)
- */
-package EOorg.EOeolang.EOtxt;
-
-import org.eolang.AtComposite;
-import org.eolang.AtFree;
-import org.eolang.Data;
-import org.eolang.Dataized;
-import org.eolang.Param;
-import org.eolang.PhDefault;
-import org.eolang.Phi;
-import org.eolang.XmirObject;
+package org.eolang;
 
 /**
- * ENDS_WITH.
+ * Bytes.
  *
- * @checkstyle TypeNameCheck (5 lines)
+ * Represents byte array of arbitrary size,
+ * convertible to a numeric value.
+ * Original size is preserved by and, or and xor.
+ *
  * @since 1.0
  */
-@XmirObject(oname = "text.ends-with")
-public class EOtext$EOends_with extends PhDefault {
+public interface Bytes extends Data<byte[]> {
+    /**
+     * NOT operation.
+     * @return Bytes.
+     */
+    Bytes not();
 
     /**
-     * Ctor.
-     *
-     * @param sigma Sigma
+     * AND operation.
+     * @param other Bytes.
+     * @return Bytes.
      */
-    public EOtext$EOends_with(final Phi sigma) {
-        super(sigma);
-        this.add("substr", new AtFree());
-        this.add(
-            "φ",
-            new AtComposite(
-                this,
-                rho -> {
-                    final String substring = new Dataized(
-                        rho.attr("substr").get()
-                    ).take(String.class);
-                    final Phi text = rho.attr("ρ").get();
-                    final String content = new Param(text, "s").strong(String.class);
-                    return new Data.ToPhi(content.endsWith(substring));
-                }
-            )
-        );
-    }
+    Bytes and(Bytes other);
 
+    /**
+     * OR operation.
+     * @param other Bytes.
+     * @return Bytes.
+     * @checkstyle MethodNameCheck (2 lines)
+     */
+    Bytes or(Bytes other);
+
+    /**
+     * XOR operation.
+     * @param other Bytes.
+     * @return Bytes.
+     */
+    Bytes xor(Bytes other);
+
+    /**
+     * Big-endian shift.
+     * @param bits Bits to shift, negative to shift left.
+     * @return Bytes.
+     */
+    Bytes shift(int bits);
+
+    /**
+     * Convert to number.
+     * @param type Type.
+     * @return Number.
+     * @param <T> Numeric type.
+     */
+    <T extends Number> T asNumber(Class<T> type);
 }
