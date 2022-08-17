@@ -131,18 +131,33 @@
           max_state.plus num
 
       [other] > eq
-        [transitions1 transitions2] > eq-transitions
+        [list1 list2] > eq-sets
           reducedi. > @
-            transitions1
+            list1
             TRUE
             [acc i item]
               and. > @
                 acc
                 gte.
                   found.
-                    transitions2
+                    list2
                     item
                   0
+        and. > @
+          eq-sets
+            transitions
+            other.transitions
+          and.
+            eq-sets
+              final_states
+              other.final_states
+            and.
+              eq.
+                s0
+                other.s0
+              eq.
+                max_state
+                other.max_state
 
     #Non-deterministic finite automata for symbol
     [sym] > nfa_by_sym
@@ -214,7 +229,7 @@
     # acc - replaced text so far
     # pa - next unhandled index in replaced text
     # m - matched segments array
-    [pt acc pa m] > replacei
+    [pt acc pa m] > replacedi
 
       [] > nextpt
         plus. > @!
@@ -257,7 +272,7 @@
         not.
           is-empty.
             list m
-        ^.replacei
+        ^.replacedi
           nextpt
           nextacc
           part.length
@@ -266,7 +281,7 @@
             0
         acc
 
-    replacei > @
+    replacedi > @
       0
       txt
       0
