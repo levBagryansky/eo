@@ -44,10 +44,10 @@
         "hello"
     $.equal-to "[a-z]+[a]*"
 
-[] > r_match_nfa_by_sym_check
+[] > r_match_nfa-by-sym_check
   assert-that > @
     max_state.
-      nfa_by_sym.
+      nfa-by-sym.
         match.
           compile.
             regex "/([a-z]+[a]*)/i"
@@ -74,7 +74,7 @@
         tr0.dest
 
 [] > r_match_increase_states_by-1
-  regex.match.nfa_by_sym "b" > my_nfa!
+  regex.match.nfa-by-sym "b" > my_nfa!
   assert-that > @
     max_state.
       my_nfa.increased_states_by
@@ -82,7 +82,7 @@
     $.equal-to 6
 
 [] > r_match_increase_states_by-2
-  regex.match.nfa_by_sym "b" > my_nfa!
+  regex.match.nfa-by-sym "b" > my_nfa!
   assert-that > @
     s0.
       my_nfa.increased_states_by
@@ -90,7 +90,7 @@
     $.equal-to 5
 
 [] > r_match_increase_states_by-3
-  regex.match.nfa_by_sym "b" > my_nfa!
+  regex.match.nfa-by-sym "b" > my_nfa!
   assert-that > @
     at.
       transitions.
@@ -101,8 +101,8 @@
       regex.match.transition "b" 5 6
 
 [] > r_match_new-transitions-check
-  regex.match.nfa_by_sym "b" > my-nfa1!
-  regex.match.nfa_by_sym "a" > my-nfa2!
+  regex.match.nfa-by-sym "b" > my-nfa1!
+  regex.match.nfa-by-sym "a" > my-nfa2!
   regex.match.nfa-by-and > new-nfa!
     my-nfa1
     my-nfa2
@@ -155,7 +155,7 @@
         tr-s1
         tr-s2
 
-[] > r_match_eq-nfa
+[] > r_match_eq-nfa-1
   regex.match.nfa > nfa1
     list
       *
@@ -183,3 +183,129 @@
       eq.
         nfa1
         nfa2
+
+[] > r_match_eq-nfa-2
+  regex.match.nfa-by-sym "a" > nfa1
+  regex.match.nfa-by-sym "b" > nfa2
+  assert-that > @
+    TRUE
+    $.equal-to
+      eq.
+        regex.match.nfa
+          list
+            *
+              regex.match.transition "a" 0 1
+              regex.match.transition "a" 2 3
+              regex.match.transition "" 1 2
+          list
+            *
+              3
+          0
+          3
+        regex.match.nfa
+          list
+            *
+              regex.match.transition "a" 0 1
+              regex.match.transition "a" 2 3
+              regex.match.transition "" 1 2
+          list
+            *
+              3
+          0
+          3
+
+[] > r_match_nfa-by-and-1
+  regex.match.nfa-by-sym "a" > nfa1
+  regex.match.nfa-by-sym "b" > nfa2
+  assert-that > @
+    FALSE
+    $.equal-to
+      eq.
+        regex.match.nfa-by-and
+          nfa1
+          nfa2
+        regex.match.nfa
+          list
+            *
+              regex.match.transition "a" 0 1
+              regex.match.transition "a" 2 3
+              regex.match.transition "" 1 2
+          list
+            *
+              3
+          0
+          3
+
+[] > r_match_nfa-by-and-2
+  regex.match.nfa-by-sym "a" > nfa1!
+  regex.match.nfa-by-sym "b" > nfa2!
+  assert-that > @
+    TRUE
+    $.all-of
+      $.equal-to
+        regex.match.nfa.eq.eq-sets
+          transitions.
+            regex.match.nfa-by-and
+              nfa1
+              nfa2
+          list
+            *
+              regex.match.transition "a" 0 1
+              regex.match.transition "b" 2 3
+              regex.match.transition "" 1 2
+      $.equal-to
+        regex.match.nfa.eq.eq-sets
+          final_states.
+            regex.match.nfa-by-and
+              nfa1
+              nfa2
+          list
+            *
+              3
+      $.equal-to
+        eq.
+          s0.
+            regex.match.nfa-by-and
+              nfa1
+              nfa2
+          0
+      $.equal-to
+        eq.
+          max_state.
+            regex.match.nfa-by-and
+              nfa1
+              nfa2
+          3
+
+[] > r_match_nfa-by-and-3
+  regex.match.nfa-by-sym "a" > nfa1!
+  regex.match.nfa-by-sym "b" > nfa2!
+  assert-that > @
+    TRUE
+    $.equal-to
+      eq.
+        regex.match.nfa-by-and
+          nfa1
+          nfa2
+        regex.match.nfa
+          list
+            *
+              regex.match.transition "a" 0 1
+              regex.match.transition "b" 2 3
+              regex.match.transition "" 1 2
+          list
+            *
+              3
+          0
+          3
+
+[] > print_s0
+  regex.match.nfa-by-sym "a" > nfa1!
+  regex.match.nfa-by-sym "b" > nfa2!
+  QQ.io.stdout > @
+    QQ.txt.sprintf
+      "s0 = %d\n"
+      s0.
+        regex.match.nfa-by-and
+          nfa1
+          nfa2

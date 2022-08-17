@@ -160,12 +160,12 @@
                 other.max_state
 
     #Non-deterministic finite automata for symbol
-    [sym] > nfa_by_sym
+    [sym] > nfa-by-sym
       nfa > @
         list:transitions
           (list *).with
             transition
-              sym
+              text sym
               memory 0
               memory 1
         list:final_states
@@ -191,20 +191,21 @@
             nfa1.transitions
             reduced.
               nfa1.final_states
-              *
+              list *
               [acc item]
                 acc.with > @
                   transition
-                    ""
+                    text ""
                     item
                     increased-nfa2.s0
 
       nfa > @
-        new-transitions:transitions
+        list:transitions
+          new-transitions
         final_states.:final_states
           increased-nfa2
         s0.:s0
-          increased-nfa2
+          nfa1
         max_state.:max_state
           increased-nfa2
 
