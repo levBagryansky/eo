@@ -100,7 +100,7 @@
     $.equal-to
       regex.match.transition "b" 5 6
 
-[] > r-match-new-transitions-check
+[] > r-match-by-and
   regex.match.nfa-by-sym "b" > my-nfa1!
   regex.match.nfa-by-sym "a" > my-nfa2!
   regex.match.nfa-by-and > new-nfa!
@@ -309,3 +309,44 @@
         regex.match.nfa-by-and
           nfa1
           nfa2
+
+[] > r-match-new-transitions-by-or
+  regex.match.nfa-by-sym "a" > my-nfa1!
+  regex.match.nfa-by-sym "b" > my-nfa2!
+  regex.match.nfa-by-or > new-nfa!
+    my-nfa1
+    my-nfa2
+  new-nfa.new-transitions > nt!
+  assert-that > @
+    TRUE
+    $.equal-to
+      eq-sets.
+        regex.match.nfa.eq
+        nt
+        list
+          *
+            regex.match.transition "a" 0 1
+            regex.match.transition "b" 2 3
+            regex.match.transition "" 0 2
+
+[] > r-match-nfa-by-or-check
+  regex.match.nfa-by-sym "a" > my-nfa1!
+  regex.match.nfa-by-sym "b" > my-nfa2!
+  regex.match.nfa-by-or > or-nfa!
+    my-nfa1
+    my-nfa2
+  assert-that > @
+    TRUE
+    $.equal-to
+      eq.
+        regex.match.nfa
+          list
+            *
+              regex.match.transition "a" 0 1
+              regex.match.transition "b" 2 3
+              regex.match.transition "" 0 2
+          list
+            * 1 3
+          0
+          3
+        or-nfa

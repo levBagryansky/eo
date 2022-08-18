@@ -214,6 +214,33 @@
       nfa2.increased-states-by > increased-nfa2!
         plus. 1
           nfa1.max-state
+      [] > new-transitions
+        list > @
+          concat.
+            list
+              with.
+                transitions.
+                  nfa1
+                transition
+                  ""
+                  s0.
+                    nfa1
+                  s0.
+                    increased-nfa2
+            transitions.
+              increased-nfa2
+      nfa > @
+        new-transitions:transitions
+        list:final-states
+          concat.
+            final-states.
+              nfa1
+            final-states.
+              increased-nfa2
+        s0.:s0
+          nfa1
+        max-state.:max-state
+          increased-nfa2
 
     #Non-deterministic finite automata for nfa1*
     [nfa1] > nfa-with-star
