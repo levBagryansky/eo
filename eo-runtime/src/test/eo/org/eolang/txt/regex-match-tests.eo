@@ -329,7 +329,7 @@
             regex.match.transition "b" 2 3
             regex.match.transition "" 0 2
 
-[] > r-match-nfa-by-or-check
+[] > r-match-nfa-by-star-check
   regex.match.nfa-by-sym "a" > my-nfa1!
   regex.match.nfa-by-sym "b" > my-nfa2!
   regex.match.nfa-by-or > or-nfa!
@@ -350,3 +350,19 @@
           0
           3
         or-nfa
+
+[] > r-match-new-transitions-by-star-1
+  regex.match.nfa-by-sym "a" > my-nfa1!
+  regex.match.nfa-by-star > new-nfa!
+    my-nfa1
+  new-nfa.new-transitions > nt!
+  assert-that > @
+    TRUE
+    $.equal-to
+      eq-sets.
+        regex.match.nfa.eq
+        nt
+        list
+          *
+            regex.match.transition "a" 0 1
+            regex.match.transition "" 1 0

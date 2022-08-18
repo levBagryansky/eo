@@ -243,8 +243,20 @@
           increased-nfa2
 
     #Non-deterministic finite automata for nfa1*
-    [nfa1] > nfa-with-star
-
+    [nfa1] > nfa-by-star
+      [] > new-transitions
+        reduced. > @
+          nfa1.final-states
+          nfa1.transitions
+          [acc final-state]
+            list > @
+              with.
+                acc
+                transition
+                  ""
+                  final-state
+                  s0.
+                    nfa1
   # Matches
   [txt] > matches
     not. > @
