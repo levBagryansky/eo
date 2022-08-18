@@ -51,16 +51,16 @@
   #  - matched string
   #  - array of identified matched groups
   [txt] > match
-    text r > regex_with_options
+    text r > regex-with-options
 
-    regex_with_options.slice > regex_txt
+    regex-with-options.slice > regex-txt
       plus. 2
-        regex_with_options.index-of ")"
+        regex-with-options.index-of ")"
       minus. 0
         minus.
           plus. 3
-            regex_with_options.index-of ")"
-          regex_with_options.length
+            regex-with-options.index-of ")"
+          regex-with-options.length
 
     # pair object
     [first second] > pair
@@ -69,20 +69,20 @@
         first.as-hash.times 100
 
     # give a list with length len and elems
-    [len elem] > list_by_len_elem
+    [len elem] > list-by-len-elem
       if. > @
         len.lte 0
         list *
-        (list_by_len_elem (len.minus 1) elem).with elem
+        (list-by-len-elem (len.minus 1) elem).with elem
 
     [sym src dest] > transition
-      [num] > increase_by
+      [num] > increase-by
         seq > @
           src.write
             src.plus num
           dest.write
             dest.plus num
-      [num] > increased_by
+      [num] > increased-by
         transition > @
           sym
           src.plus
@@ -101,34 +101,34 @@
               x.dest
 
     #Non-deterministic finite automation
-    [transitions final_states s0 max_state] > nfa
-      [num] > increase_states_by
+    [transitions final-states s0 max-state] > nfa
+      [num] > increase-states-by
         seq > @
           transitions.each
             [tr]
-              tr.increase_by > @
+              tr.increase-by > @
                 num
-          final_states.each
-            [state_i]
-              state_i.write > @
-                state_i.plus num
+          final-states.each
+            [state-i]
+              state-i.write > @
+                state-i.plus num
           s0.write
             s0.plus num
-          max_state.write
-            max_state.plus num
+          max-state.write
+            max-state.plus num
 
-      [num] > increased_states_by
+      [num] > increased-states-by
         nfa > @
           transitions.mapped
             [tr]
-              tr.increased_by > @
+              tr.increased-by > @
                 num
-          final_states.mapped
+          final-states.mapped
             [item]
               item.plus > @
                 num
           s0.plus num
-          max_state.plus num
+          max-state.plus num
 
       [other] > eq
         [list1 list2] > eq-sets
@@ -149,15 +149,15 @@
             other.transitions
           and.
             eq-sets
-              final_states
-              other.final_states
+              final-states
+              other.final-states
             and.
               eq.
                 s0
                 other.s0
               eq.
-                max_state
-                other.max_state
+                max-state
+                other.max-state
 
     #Non-deterministic finite automata for symbol
     [sym] > nfa-by-sym
@@ -168,21 +168,21 @@
               text sym
               memory 0
               memory 1
-        list:final_states
+        list:final-states
           with.
             list
               *
             memory 1
         memory:s0
           0
-        memory:max_state
+        memory:max-state
           1
 
     #Non-deterministic finite automata concatenating nfa1 & nfa2
     [nfa1 nfa2] > nfa-by-and
-      nfa2.increased_states_by > increased-nfa2!
+      nfa2.increased-states-by > increased-nfa2!
         plus. 1
-          nfa1.max_state
+          nfa1.max-state
 
       [] > new-transitions
         concat. > @
@@ -190,7 +190,7 @@
           concat.
             nfa1.transitions
             reduced.
-              nfa1.final_states
+              nfa1.final-states
               list *
               [acc item]
                 acc.with > @
@@ -202,18 +202,21 @@
       nfa > @
         list:transitions
           new-transitions
-        final_states.:final_states
+        final-states.:final-states
           increased-nfa2
         s0.:s0
           nfa1
-        max_state.:max_state
+        max-state.:max-state
           increased-nfa2
 
     #Non-deterministic finite automata for nfa1 || nfa1
-    [nfa1 nfa2] > nfa_by_or
+    [nfa1 nfa2] > nfa-by-or
+      nfa2.increased-states-by > increased-nfa2!
+        plus. 1
+          nfa1.max-state
 
     #Non-deterministic finite automata for nfa1*
-    [nfa1] > nfa_with_star
+    [nfa1] > nfa-with-star
 
   # Matches
   [txt] > matches
