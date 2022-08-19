@@ -366,3 +366,78 @@
           *
             regex.match.transition "a" 0 1
             regex.match.transition "" 1 0
+
+[] > r-match-new-transitions-by-star-2
+  regex.match.nfa-by-sym "a" > my-nfa1!
+  regex.match.nfa-by-sym "b" > my-nfa2!
+  regex.match.nfa-by-and > nfa-and!
+    my-nfa1
+    my-nfa2
+  regex.match.nfa-by-star > nfa-and-star!
+    nfa-and
+  nfa-and-star.new-transitions > nt!
+  each. > @
+    nfa-and-star.new-transitions
+    [tr-n]
+      QQ.io.stdout > @
+        QQ.txt.sprintf
+          "sym = %s src = %d dest = %d\n"
+          tr-n.sym
+          tr-n.src
+          tr-n.dest
+
+[] > r-match-new-transitions-by-star-stackoverflow
+  regex.match.nfa-by-sym "a" > my-nfa1!
+  regex.match.nfa-by-sym "b" > my-nfa2!
+  regex.match.nfa-by-and > nfa-and!
+    my-nfa1
+    my-nfa2
+  regex.match.nfa-by-star > nfa-and-star!
+    nfa-and
+  nfa-and-star.new-transitions > nt!
+  assert-that > @
+    TRUE
+    $.equal-to
+      regex.match.nfa.eq.eq-sets
+        list
+          *
+            regex.match.transition "b" 2 3
+            regex.match.transition "" 1 2
+            regex.match.transition "" 3 0
+            regex.match.transition "a" 0 1
+
+        list
+          *
+            regex.match.transition "b" 2 3
+            regex.match.transition "" 1 2
+            regex.match.transition "" 3 0
+            regex.match.transition "a" 0 1
+
+[] > r-match-new-transitions-by-star-stack-overflow
+  [list1 list2] > eq-sets
+    reduced. > @
+      list1
+      TRUE
+      [acc item]
+        and. > @
+          acc
+          gte.
+            found.
+              list2
+              item
+            0
+  eq. > @
+    TRUE
+    eq-sets
+      list
+        *
+          list (* 12 2 3)
+          list (* 11 0 1)
+          list (* 100 1 2)
+          list (* 100 3 0)
+      list
+        *
+          list (* 11 0 1)
+          list (* 12 2 3)
+          list (* 100 1 2)
+          list (* 100 3 0)
