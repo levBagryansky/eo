@@ -245,10 +245,10 @@
     #Non-deterministic finite automata for nfa1*
     [nfa1] > nfa-by-star
       [] > new-transitions
-        reduced. > @
+        reducedi. > @
           nfa1.final-states
           nfa1.transitions
-          [acc final-state]
+          [acc i final-state]
             list > @
               with.
                 acc
@@ -257,6 +257,7 @@
                   final-state
                   s0.
                     nfa1
+
   # Matches
   [txt] > matches
     not. > @
