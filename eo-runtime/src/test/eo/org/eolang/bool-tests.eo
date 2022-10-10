@@ -203,3 +203,12 @@
           x.write (x.plus i)
           x
     $.equal-to FALSE
+
+[] > hash-test
+  my-atom > a
+  seq > @
+    print-hash.
+      a
+    print-hash.
+      self.
+        a
