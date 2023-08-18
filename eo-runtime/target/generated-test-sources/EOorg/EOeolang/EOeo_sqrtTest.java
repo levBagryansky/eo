@@ -46,11 +46,24 @@ public final class EOeo_sqrtTest extends PhDefault {
 
   @Test
   public void works() throws java.lang.Exception {
+    long start, finish;
+    Object obj;
+
+//    System.gc();
+//    Thread.sleep(1);
+//    start = System.currentTimeMillis();
+//    obj = new Dataized(new EOeo_sqrtTest()).take();
+//    finish = System.currentTimeMillis();
+//    System.out.println("dataizing with eo takes " + (finish - start));
+//
+//    Thread.sleep(1);
     final Dataized sqrt = new Dataized(new EOeo_sqrtTest().attr("babylonian-method").get());
-    final long start = System.currentTimeMillis();
-    Object obj = sqrt.take();
-    final long finish = System.currentTimeMillis();
+    System.gc();
+    start = System.currentTimeMillis();
+    obj = sqrt.take();
+    finish = System.currentTimeMillis();
     System.out.println("dataizing with eo takes " + (finish - start));
+
     if (obj instanceof String) {
       Assertions.fail(obj.toString());
     } else {

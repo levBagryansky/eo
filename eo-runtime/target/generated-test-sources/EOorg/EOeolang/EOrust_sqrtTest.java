@@ -79,6 +79,9 @@ public final class EOrust_sqrtTest extends PhDefault {
   @Test
   public void works() throws java.lang.Exception {
     final Dataized sqrt = new Dataized(new EOrust_sqrtTest().attr("sqrt").get());
+
+    Thread.sleep(1);
+    System.gc();
     final long start = System.currentTimeMillis();
     Object obj = sqrt.take();
     final long finish = System.currentTimeMillis();
