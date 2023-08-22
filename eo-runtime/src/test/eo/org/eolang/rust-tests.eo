@@ -226,7 +226,6 @@
 
       let a = arr_a.read_i64::<BigEndian>().unwrap();
       let b = arr_b.read_i64::<BigEndian>().unwrap();
-      println!("sum 5 + 10 = {}", a + b);
 
       EOInt(a + b)
     }
@@ -237,3 +236,69 @@
   assert-that > @
     plus
     $.equal-to 15
+
+[] > measures-eo-plus
+  5 > a
+  10 > b
+  a.plus b > plus
+  assert-that > @
+    plus
+    $.equal-to 15
+
+[] > measures-rust-sqrt
+  4.0 > a
+  QQ.rust > sqrt
+    """
+    use eo_env::EOEnv;
+    use eo_env::eo_enum::EO;
+    use eo_env::eo_enum::EO::{EOFloat};
+    use byteorder::{BigEndian, ReadBytesExt};
+
+    pub fn foo(env: &mut EOEnv) -> EO {
+      let v = env.find("^.a") as u32;
+      let bytes_a = env.dataize(v).unwrap();
+      let mut arr_a = unsafe { &*(&bytes_a[0..] as *const _  as *const [u8]) };
+      let a = arr_a.read_f64::<BigEndian>().unwrap();
+
+      EOFloat(a.sqrt())
+    }
+    """
+    *
+      []
+      "byteorder:1.4.3"
+  eq. > @
+    sqrt
+    2.0
+
+[] > measures-eo-sqrt
+  4.0 > a
+  [] > babylonian-method
+    memory 1.0 > x-new
+    memory 0.0 > x-old
+    memory 1.0 > diff
+    memory 0 > counter
+    seq > @
+      while.
+        gt.
+          diff
+          1.0e-15
+        [i]
+          seq > @
+            x-old.write
+              x-new
+            x-new.write
+              times.
+                0.5
+                plus.
+                  div.
+                    a
+                    x-old
+                  x-old
+            diff.write
+              abs.
+                QQ.math.number
+                  x-new.minus x-old
+      x-new
+  eq. > @
+    babylonian-method
+    2.0
