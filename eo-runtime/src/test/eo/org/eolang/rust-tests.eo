@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 +alias org.eolang.hamcrest.assert-that
++alias org.eolang.math.random
 +home https://github.com/objectionary/eo
 +tests
 +package org.eolang
@@ -322,3 +323,23 @@
   eq. > @
     babylonian-method
     2.0
+
+[] > random-eo
+  random.pseudo > r
+  TRUE > @
+
+[] > random-rust
+  QQ.rust > r
+    """
+    use eo_env::EOEnv;
+    use eo_env::eo_enum::EO;
+    use eo_env::eo_enum::EO::{EOInt};
+
+    pub fn foo(_env: &mut EOEnv) -> EO {
+      EOInt(rand::random::<i64>())
+    }
+    """
+    *
+      []
+      "rand:0.4.5"
+  TRUE > @

@@ -108,7 +108,7 @@ public final class EOmeasures_rust_plus_testTest extends PhDefault {
     final int count = 1;
     final long start = System.currentTimeMillis();
     for (int i = 0; i < count; i++) {
-      new Dataized(new EOmeasures_rust_plusTest()).take();
+      new Dataized(new EOmeasures_rust_plus_testTest()).take();
     }
     final long finish = System.currentTimeMillis();
     System.out.println(((double) finish - start) / count);
@@ -119,7 +119,7 @@ public final class EOmeasures_rust_plus_testTest extends PhDefault {
   // 0.496 ms with jit
   public void full()throws Exception {
     final int warmup = 1000;
-    final Dataized full_test = new Dataized(new EOmeasures_rust_plusTest());
+    final Dataized full_test = new Dataized(new EOmeasures_rust_plus_testTest());
     for (int i = 0; i < warmup; i++) {
       full_test.take();
     }
@@ -137,7 +137,7 @@ public final class EOmeasures_rust_plus_testTest extends PhDefault {
   // 0.41 with jit
   // 10.04 without jit
   public void plus_only() throws Exception {
-    final Phi plus = new EOmeasures_rust_plusTest().attr("plus").get();
+    final Phi plus = new EOmeasures_rust_plus_testTest().attr("plus").get();
     final Dataized dataized = new Dataized(plus);
     final int warmup = 500;
     for (int i = 0; i < warmup; i++) {
