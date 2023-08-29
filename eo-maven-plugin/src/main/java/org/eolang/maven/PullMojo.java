@@ -26,6 +26,7 @@ package org.eolang.maven;
 import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -76,7 +77,7 @@ public final class PullMojo extends SafeMojo {
      * @since 0.29.6
      */
     @SuppressWarnings("PMD.ImmutableField")
-    private CommitHash hsh;
+    private CommitHash hash;
 
     /**
      * Objectionaries.
@@ -98,35 +99,38 @@ public final class PullMojo extends SafeMojo {
 
     @Override
     public void exec() throws IOException {
-        if (this.hsh == null) {
-            this.hsh = new ChCached(
+        if (this.hash == null) {
+            this.hash = new ChCached(
                 new ChNarrow(
                     new ChRemote(this.tag)
                 )
             );
         }
         final Collection<ForeignTojo> tojos = this.scopedTojos().withoutSources();
+        final Collection<ObjectName> names = new ArrayList<>(0);
         for (final ForeignTojo tojo : tojos) {
             final ObjectName name = new OnCached(
                 new OnSwap(
                     this.withVersions,
-                    new OnVersioned(tojo.identifier(), this.hsh)
+                    new OnVersioned(tojo.identifier(), this.hash)
                 )
             );
+            names.add(name);
             tojo.withSource(this.pull(name).toAbsolutePath())
                 .withHash(new ChNarrow(name.hash()));
         }
         Logger.info(
             this,
-            "%d program(s) were pulled",
-            tojos.size()
+            "%d program(s) were pulled: %s",
+            tojos.size(),
+            names
         );
     }
 
     /**
      * Pull one object.
      *
-     * @param object Name of the object with/without version, e.g. "org.eolang.io.stdout#5f82cc1"
+     * @param object Name of the object with/without version, e.g. "org.eolang.io.stdout|5f82cc1"
      * @return The path of .eo file
      * @throws IOException If fails
      */

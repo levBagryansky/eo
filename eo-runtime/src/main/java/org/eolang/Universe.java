@@ -46,10 +46,21 @@ public class Universe {
     /**
      * Ctor.
      * @param connector Connector.
+     * @param indexed Map to index eo objects.
+     */
+    public Universe(final Phi connector, final Map<Integer, Phi> indexed) {
+        this.connector = connector;
+        this.indexed = indexed;
+    }
+
+    /**
+     * Ctor.
+     * @param connector Connector.
      */
     public Universe(final Phi connector) {
-        this.connector = connector;
-        this.indexed = new HashMap<>();
+        this(
+            connector, new HashMap<>()
+        );
     }
 
     /**
@@ -65,11 +76,31 @@ public class Universe {
      * @return Vertex of the object to find.
      */
     public int find(final String name) {
-        Phi accum = this.connector;
+        if (name == null) {
+            throw new IllegalArgumentException(
+                "Argument name is null"
+            );
+        }
+        Phi accum;
         final String[] atts = Universe.replace(name)
             .split("\\.");
+        if ("Q".equals(atts[0])) {
+            accum = Phi.Φ;
+        } else if ("$".equals(atts[0])) {
+            accum = this.connector;
+        } else {
+            throw new ExFailure(
+                String.format(
+                    "Universe.find starts with %s, but it should start with Q or $ only",
+                    atts[0]
+                )
+            );
+        }
+        atts[0] = "";
         for (final String att: atts) {
-            accum = accum.attr(att).get();
+            if (!"".equals(att)) {
+                accum = accum.attr(att).get();
+            }
         }
         this.indexed.putIfAbsent(accum.hashCode(), accum);
         return accum.hashCode();
@@ -79,9 +110,6 @@ public class Universe {
      * Puts data to eo object by vertex.
      * @param vertex Vertex off object.
      * @param bytes Data to put.
-     * @todo #2237:45min Implement the "put" method. Now it does
-     *  nothing and created to check rust2java interaction. This
-     *  method relates to building a new eo object in rust insert.
      * @checkstyle NonStaticMethodCheck (4 lines)
      */
     public void put(final int vertex, final byte[] bytes) {
@@ -122,18 +150,28 @@ public class Universe {
      */
     public byte[] dataize(final int vertex) {
         return new Param(
-            Optional.ofNullable(
-                this.indexed.get(vertex)
-            ).orElseThrow(
-                () -> new ExFailure(
-                    String.format(
-                        "Phi object with vertex %d was not indexed.",
-                        vertex
-                    )
-                )
-            ),
+            this.get(vertex),
             "Δ"
         ).asBytes().take();
+    }
+
+    /**
+     * Find phi by vertex.
+     * @param vertex Vertex.
+     * @return Phi.
+     * @throws ExFailure if vertex does not exist in the map.
+     */
+    private Phi get(final int vertex) {
+        return Optional.ofNullable(
+            this.indexed.get(vertex)
+        ).orElseThrow(
+            () -> new ExFailure(
+                String.format(
+                    "Phi object with vertex %d was not indexed.",
+                    vertex
+                )
+            )
+        );
     }
 
     /**
