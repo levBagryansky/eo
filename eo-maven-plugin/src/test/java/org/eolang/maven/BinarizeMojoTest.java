@@ -23,6 +23,7 @@
  */
 package org.eolang.maven;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -113,6 +114,55 @@ final class BinarizeMojoTest {
         );
         Assertions.assertDoesNotThrow(
             () -> maven.execute(new FakeMaven.Binarize())
+        );
+    }
+
+    @Test
+    @Tag("slow")
+    void boostsSecondCompilation(@TempDir final Path temp) throws IOException {
+        final FakeMaven maven;
+        final Path cache = temp.resolve(".cache");
+        synchronized (BinarizeMojoTest.class) {
+            maven = new FakeMaven(temp)
+                .withProgram(BinarizeMojoTest.SRC.resolve("simple-rust.eo"))
+                .with("cache", cache);
+        }
+        long start = System.currentTimeMillis();
+        maven.execute(new FakeMaven.Binarize());
+        long finish = System.currentTimeMillis();
+        final long first = finish - start;
+        start = finish;
+        maven.execute(new FakeMaven.Binarize());
+        finish = System.currentTimeMillis();
+        final long second = finish - start;
+        MatcherAssert.assertThat(
+            second,
+            Matchers.lessThan(first)
+        );
+    }
+
+    @Test
+    @Tag("slow")
+    void doesNotRecompile(@TempDir final Path temp) throws IOException {
+        final FakeMaven maven;
+        final Path cache = temp.resolve(".cache");
+        synchronized (BinarizeMojoTest.class) {
+            maven = new FakeMaven(temp)
+                .withProgram(BinarizeMojoTest.SRC.resolve("simple-rust.eo"))
+                .with("cache", cache);
+        }
+        maven.execute(new FakeMaven.Binarize());
+        final File executable = cache
+            .resolve("Lib/native0/target/debug/")
+            .resolve(BinarizeMojo.LIB)
+            .toFile();
+        final long first = executable.lastModified();
+        maven.execute(new FakeMaven.Binarize());
+        final long second = executable.lastModified();
+        MatcherAssert.assertThat(first, Matchers.not(0L));
+        MatcherAssert.assertThat(
+            second,
+            Matchers.equalTo(first)
         );
     }
 }

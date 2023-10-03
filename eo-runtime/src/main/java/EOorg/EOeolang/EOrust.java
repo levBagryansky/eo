@@ -33,10 +33,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.SystemUtils;
 import org.cactoos.bytes.Base64Bytes;
@@ -48,9 +52,13 @@ import org.eolang.AtFree;
 import org.eolang.Data;
 import org.eolang.Dataized;
 import org.eolang.ExFailure;
+import org.eolang.ExNative;
 import org.eolang.PhDefault;
 import org.eolang.Phi;
 import org.eolang.Universe;
+import org.eolang.UniverseDefault;
+import org.eolang.UniverseSafe;
+import org.eolang.Versionized;
 import org.eolang.XmirObject;
 
 /**
@@ -60,11 +68,8 @@ import org.eolang.XmirObject;
  * @checkstyle MethodNameCheck (100 lines)
  * @checkstyle LineLengthCheck (100 lines)
  * @checkstyle TypeNameCheck (5 lines)
- * @todo #2283:90min Create Universe class. Now its functionality is
- *  assigned to "EORust", which is why it is overcomplicated. "Universe"
- *  should perform a model of interaction with "eo" objects through
- *  methods "find", "put", "copy", "dataize" and "bind".
  */
+@Versionized
 @XmirObject(oname = "rust")
 public class EOrust extends PhDefault {
 
@@ -73,6 +78,16 @@ public class EOrust extends PhDefault {
      * and native method as the value.
      */
     private static final ConcurrentHashMap<String, String> NAMES;
+
+    /**
+     * All phis indexed while executing of native method.
+     */
+    private final Map<Integer, Phi> phis = new HashMap<>();
+
+    /**
+     * Error that possibly was thrown while the native function execution.
+     */
+    private final AtomicReference<Throwable> error = new AtomicReference<>();
 
     static {
         try {
@@ -150,12 +165,17 @@ public class EOrust extends PhDefault {
                         .attr("params").get()
                         .attr("Δ").get()
                     ).take(Phi[].class)[0];
-                    return EOrust.translate(
+                    return this.translate(
                         (byte[]) method.invoke(
-                            null, new Universe(
-                                portal
+                            null,
+                            new UniverseSafe(
+                                new UniverseDefault(
+                                    portal, this.phis
+                                ),
+                                this.error
                             )
-                        )
+                        ),
+                        rho.attr("code").get().locator()
                     );
                 }
             )
@@ -205,25 +225,32 @@ public class EOrust extends PhDefault {
     /**
      * Translates byte message from rust side to Phi object.
      * @param message Message that native method returns.
+     * @param insert Location of the rust insert.
      * @return Phi object.
-     * @todo #2283:45min Implement handling of vertex returning.
-     *  It must convert message array from 1 to last byte to the int
-     *  and return eo object with corresponding vertex then.
-     * @todo #2283:45min Implement handling of String returning.
-     *  It must convert message array from 1 to last byte to the String
-     *  and return eo object with converted String Data.
      */
-    private static Phi translate(final byte[] message) {
+    private Phi translate(final byte[] message, final String insert) {
         final byte determinant = message[0];
         final byte[] content = Arrays.copyOfRange(message, 1, message.length);
         final Phi ret;
         switch (determinant) {
             case 0:
-                throw new ExFailure(
-                    "Returning vertex is not implemented yet"
-                );
+                ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+                buffer.put(content);
+                buffer.flip();
+                final int vertex = buffer.getInt();
+                ret = this.phis.get(vertex);
+                if (ret == null) {
+                    throw new ExFailure(
+                        String.format(
+                            "Returned phi with vertex %d (%s in bytes) was not indexed",
+                            vertex,
+                            Arrays.toString(content)
+                            )
+                    );
+                }
+                break;
             case 1:
-                ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
+                buffer = ByteBuffer.allocate(Double.BYTES);
                 buffer.put(content);
                 buffer.flip();
                 ret = new Data.ToPhi(buffer.getDouble());
@@ -234,9 +261,36 @@ public class EOrust extends PhDefault {
                 buffer.flip();
                 ret = new Data.ToPhi(buffer.getLong());
                 break;
+            case 4:
+                ret = new Data.ToPhi(content);
+                break;
+            case 3:
+                ret = new Data.ToPhi(
+                    new String(content, StandardCharsets.UTF_8)
+                );
+                break;
+            case 5:
+                final String cause = new String(content, StandardCharsets.UTF_8);
+                if (this.error.get() == null) {
+                    throw new ExNative(
+                        "Rust insert failed in %s with message '%s'",
+                        insert,
+                        cause
+                    );
+                } else {
+                    throw new ExNative(
+                        String.format(
+                            "Rust insert failed in %s with message '%s'",
+                            insert,
+                            cause
+                        ),
+                        this.error.get()
+                    );
+                }
             default:
-                throw new ExFailure(
-                    "Returning Strings and raw bytes is not implemented yet"
+                throw new ExNative(
+                    "Returning Strings and raw bytes is not implemented yet, insert %s",
+                    insert
                 );
         }
         return ret;

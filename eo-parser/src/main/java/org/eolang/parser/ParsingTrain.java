@@ -57,7 +57,6 @@ public final class ParsingTrain extends TrEnvelope {
     private static final String[] SHEETS = {
         "/org/eolang/parser/errors/not-empty-atoms.xsl",
         "/org/eolang/parser/critical-errors/duplicate-names.xsl",
-        "/org/eolang/parser/errors/wrong-versions.xsl",
         "/org/eolang/parser/errors/many-free-attributes.xsl",
         "/org/eolang/parser/errors/broken-aliases.xsl",
         "/org/eolang/parser/errors/duplicate-aliases.xsl",
@@ -78,7 +77,6 @@ public final class ParsingTrain extends TrEnvelope {
         "/org/eolang/parser/warnings/incorrect-version.xsl",
         "/org/eolang/parser/expand-aliases.xsl",
         "/org/eolang/parser/resolve-aliases.xsl",
-        "/org/eolang/parser/scopes.xsl",
         "/org/eolang/parser/add-refs.xsl",
         "/org/eolang/parser/add-default-package.xsl",
         "/org/eolang/parser/errors/broken-refs.xsl",
@@ -92,9 +90,9 @@ public final class ParsingTrain extends TrEnvelope {
         "/org/eolang/parser/warnings/correct-package-meta.xsl",
         "/org/eolang/parser/warnings/prohibited-package.xsl",
         "/org/eolang/parser/errors/unused-aliases.xsl",
-        "/org/eolang/parser/errors/data-objects.xsl",
         "/org/eolang/parser/warnings/unit-test-without-phi.xsl",
         "/org/eolang/parser/set-locators.xsl",
+        "/org/eolang/parser/explicit-data.xsl",
     };
 
     /**

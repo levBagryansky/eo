@@ -32,20 +32,19 @@ import java.util.Map;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.map.MapEntry;
 import org.eolang.maven.hash.ChCached;
-import org.eolang.maven.hash.ChCompound;
 import org.eolang.maven.hash.ChPattern;
+import org.eolang.maven.hash.ChRemote;
 import org.eolang.maven.hash.ChText;
 import org.eolang.maven.hash.CommitHash;
 import org.eolang.maven.hash.CommitHashesMap;
 import org.eolang.maven.name.ObjectName;
-import org.eolang.maven.name.OnDefault;
+import org.eolang.maven.name.OnVersioned;
 import org.eolang.maven.objectionary.Objectionaries;
 import org.eolang.maven.objectionary.ObjsDefault;
 import org.eolang.maven.objectionary.OyRemote;
 import org.eolang.maven.util.Home;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -64,16 +63,11 @@ final class PullMojoTest {
     private static final String STDOUT = "org.eolang.io.stdout";
 
     /**
-     * Stdout source.
-     */
-    private static final String SOURCE = "%s/org/eolang/io/stdout.eo";
-
-    /**
      * Versioned source.
      */
-    private static final ObjectName VERSIONED = new OnDefault(
-        "%s/org/eolang/io/stdout",
-        "9c93528.eo"
+    private static final ObjectName VERSIONED = new OnVersioned(
+        "org.eolang.io.stdout",
+        "9c93528"
     );
 
     @Test
@@ -85,7 +79,7 @@ final class PullMojoTest {
         maven.with("skip", false)
             .execute(PullMojo.class);
         MatcherAssert.assertThat(
-            PullMojoTest.exists(temp, PullMojoTest.SOURCE),
+            PullMojoTest.exists(temp, PullMojoTest.STDOUT),
             Matchers.is(true)
         );
     }
@@ -94,11 +88,11 @@ final class PullMojoTest {
     void pullsFromProbes(@TempDir final Path temp) throws IOException {
         new FakeMaven(temp)
             .withProgram(
-                "+package org.eolang.custom",
-                "",
+                "+package org.eolang.custom\n",
                 "[] > main",
                 "  QQ.io.stdout > @",
-                "    QQ.txt.sprintf \"I am %d years old\"",
+                "    QQ.txt.sprintf",
+                "      \"I am %d years old\"",
                 "      plus.",
                 "        1337",
                 "        228"
@@ -107,13 +101,13 @@ final class PullMojoTest {
                 "objectionaries",
                 new Objectionaries.Fake(
                     new OyRemote(
-                        new ChCompound(null, null, "master")
+                        new ChRemote("master")
                     )
                 )
             )
             .execute(new FakeMaven.Pull());
         MatcherAssert.assertThat(
-            PullMojoTest.exists(temp, PullMojoTest.SOURCE),
+            PullMojoTest.exists(temp, PullMojoTest.STDOUT),
             Matchers.is(true)
         );
     }
@@ -130,7 +124,7 @@ final class PullMojoTest {
             .withVersion("*.*.*");
         maven.with("skip", false)
             .with(
-                "hsh",
+                "hash",
                 new ChCached(new ChText(temp.resolve("tags.txt"), "master"))
             )
             .execute(PullMojo.class);
@@ -153,7 +147,7 @@ final class PullMojoTest {
             .withVersion("*.*.*");
         maven.with("skip", false)
             .with(
-                "hsh",
+                "hash",
                 new ChCached(new ChPattern("*.*.*:abcdefg", "1.0.0"))
             )
             .execute(PullMojo.class);
@@ -173,7 +167,7 @@ final class PullMojoTest {
         maven.with("skip", true)
             .execute(PullMojo.class);
         MatcherAssert.assertThat(
-            PullMojoTest.exists(temp, PullMojoTest.SOURCE),
+            PullMojoTest.exists(temp, PullMojoTest.STDOUT),
             Matchers.is(false)
         );
     }
@@ -181,8 +175,8 @@ final class PullMojoTest {
     @Test
     void pullsVersionedObjectSuccessfully(@TempDir final Path temp) throws IOException {
         final FakeMaven maven = new FakeMaven(temp);
-        maven.externalTojos()
-            .add(new OnDefault(PullMojoTest.STDOUT, "9c93528"))
+        maven.foreignTojos()
+            .add(new OnVersioned(PullMojoTest.STDOUT, "9c93528"))
             .withVersion("*.*.*");
         maven.with("withVersions", true)
             .execute(PullMojo.class);
@@ -222,7 +216,6 @@ final class PullMojoTest {
     }
 
     @Test
-    @Disabled
     void pullsProbedVersionedObjectsFromDifferentObjectionaries(@TempDir final Path temp)
         throws IOException {
         final Map<String, CommitHash> hashes = new CommitHashesMap.Fake();
@@ -241,11 +234,11 @@ final class PullMojoTest {
                 )
             )
             .with("withVersions", true)
-            .with("hsh", fourth)
+            .with("hash", fourth)
             .withVersionedProgram()
             .execute(new FakeMaven.Pull());
-        final ObjectName sprintf = new OnDefault("%s/org/eolang/txt/sprintf", "17f8929.eo");
-        final ObjectName string = new OnDefault("%s/org/eolang/string", "5f82cc1.eo");
+        final ObjectName sprintf = new OnVersioned("org.eolang.txt.sprintf", "17f8929");
+        final ObjectName string = new OnVersioned("org.eolang.string", "5f82cc1");
         MatcherAssert.assertThat(
             String.format(
                 "File by path %s should have existed after pulling, but it didn't",
@@ -272,6 +265,28 @@ final class PullMojoTest {
         );
     }
 
+    @Test
+    void doesNotPullInOfflineMode(@TempDir final Path tmp) throws IOException {
+        final Map<String, Path> result = new FakeMaven(tmp)
+            .withHelloWorld()
+            .with("offline", true)
+            .execute(new FakeMaven.Pull())
+            .result();
+        final String format = "%s folder should not contain %s file, but it did";
+        final String stdout = "org/eolang/io/stdout.eo";
+        final String string = "org/eolang/string.eo";
+        MatcherAssert.assertThat(
+            String.format(format, PullMojo.DIR, stdout),
+            result.containsKey(String.format("%s/%s", PullMojo.DIR, stdout)),
+            Matchers.is(false)
+        );
+        MatcherAssert.assertThat(
+            String.format(format, PullMojo.DIR, string),
+            result.containsKey(String.format("%s/%s", PullMojo.DIR, string)),
+            Matchers.is(false)
+        );
+    }
+
     /**
      * Check if the given source file exists in the target directory.
      * @param temp Test temporary directory.
@@ -290,9 +305,16 @@ final class PullMojoTest {
      * @return If given source file exists.
      */
     private static boolean exists(final Path temp, final String source) {
-        return new Home(temp.resolve("target")).exists(
-            Paths.get(PullMojoTest.path(source))
-        );
+        return new Home(temp.resolve("target")).exists(PullMojoTest.path(source));
+    }
+
+    /**
+     * Format given a source path.
+     * @param name Source path as object name.
+     * @return Formatted source path.
+     */
+    private static Path path(final ObjectName name) {
+        return PullMojoTest.path(name.toString());
     }
 
     /**
@@ -300,16 +322,8 @@ final class PullMojoTest {
      * @param source Source path as object name.
      * @return Formatted source path.
      */
-    private static String path(final ObjectName source) {
-        return PullMojoTest.path(source.toString());
+    private static Path path(final String source) {
+        return new Place(source).make(Paths.get(PullMojo.DIR), "eo");
     }
 
-    /**
-     * Format given a source path.
-     * @param source Source path.
-     * @return Formatted source path.
-     */
-    private static String path(final String source) {
-        return String.format(source, PullMojo.DIR);
-    }
 }

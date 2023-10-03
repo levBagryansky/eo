@@ -26,6 +26,7 @@ package org.eolang.maven;
 import com.yegor256.tojos.MnCsv;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,11 +37,11 @@ import org.eolang.maven.hash.CommitHash;
 import org.eolang.maven.hash.CommitHashesMap;
 import org.eolang.maven.name.ObjectName;
 import org.eolang.maven.name.OnDefault;
+import org.eolang.maven.name.OnVersioned;
 import org.eolang.maven.tojos.ForeignTojo;
 import org.eolang.maven.tojos.ForeignTojos;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,19 +56,19 @@ final class DiscoverMojoTest {
     /**
      * Text.
      */
-    private static final ObjectName TEXT = new OnDefault("org.eolang.txt.text", "5f82cc1");
+    private static final ObjectName TEXT = new OnVersioned("org.eolang.txt.text", "5f82cc1");
 
     /**
      * Default assertion message.
      */
     private static final String SHOULD_CONTAIN =
-        "External tojos should contain %s object after discovering, but they didn't";
+        "Tojos should contain %s object after discovering, but they didn't";
 
     /**
      * Default assertion message.
      */
     private static final String SHOULD_NOT =
-        "External tojos should not contain %s object after discovering, but they did";
+        "Tojos should not contain %s object after discovering, but they did";
 
     @ParameterizedTest
     @CsvSource({
@@ -113,16 +114,14 @@ final class DiscoverMojoTest {
     }
 
     @Test
-    @Disabled
     void discoversWithVersions(@TempDir final Path tmp) throws IOException {
         final FakeMaven maven = new FakeMaven(tmp)
             .with("withVersions", true)
-            .with("hashes", new CommitHashesMap.Fake())
             .withVersionedProgram()
             .execute(new FakeMaven.Discover());
-        final ObjectName stdout = new OnDefault("org.eolang.stdout", "9c93528");
+        final ObjectName stdout = new OnVersioned("org.eolang.stdout", "9c93528");
         final String nop = "org.eolang.nop";
-        final ForeignTojos tojos = maven.externalTojos();
+        final ForeignTojos tojos = maven.foreignTojos();
         MatcherAssert.assertThat(
             String.format(DiscoverMojoTest.SHOULD_CONTAIN, DiscoverMojoTest.TEXT),
             tojos.contains(DiscoverMojoTest.TEXT),
@@ -141,14 +140,12 @@ final class DiscoverMojoTest {
     }
 
     @Test
-    @Disabled
     void discoversWithSeveralObjectsWithDifferentVersions(
         @TempDir final Path tmp
     ) throws IOException {
         final Map<String, CommitHash> hashes = new CommitHashesMap.Fake();
         final FakeMaven maven = new FakeMaven(tmp)
             .with("withVersions", true)
-            .with("hashes", hashes)
             .withProgram(
                 "+alias org.eolang.txt.sprintf\n",
                 "[] > main",
@@ -164,9 +161,9 @@ final class DiscoverMojoTest {
                 "    nop"
             )
             .execute(new FakeMaven.Discover());
-        final ObjectName first = new OnDefault("org.eolang.txt.sprintf", hashes.get("0.28.1"));
-        final ObjectName second = new OnDefault("org.eolang.txt.sprintf", hashes.get("0.28.2"));
-        final ForeignTojos tojos = maven.externalTojos();
+        final ObjectName first = new OnVersioned("org.eolang.txt.sprintf", hashes.get("0.28.1"));
+        final ObjectName second = new OnVersioned("org.eolang.txt.sprintf", hashes.get("0.28.2"));
+        final ForeignTojos tojos = maven.foreignTojos();
         MatcherAssert.assertThat(
             String.format(DiscoverMojoTest.SHOULD_CONTAIN, first),
             tojos.contains(first),
@@ -180,22 +177,54 @@ final class DiscoverMojoTest {
     }
 
     @Test
+    void discoversDifferentUnversionedObjectsFromDifferentVersionedObjects(@TempDir final Path tmp)
+        throws IOException {
+        final Map<String, CommitHash> hashes = new CommitHashesMap.Fake();
+        final String first = String.join("\n", "[] > sprintf", "  text > @");
+        final String second = String.join("\n", "[] > sprintf", "  text|0.28.5 > @");
+        final String one = hashes.get("0.28.1").value();
+        final String two = hashes.get("0.28.2").value();
+        final String three = hashes.get("0.28.5").value();
+        final String string = "org.eolang.text";
+        final String object = "foo.x.sprintf";
+        final ForeignTojos tojos = new FakeMaven(tmp)
+            .with("withVersions", true)
+            .withProgram(first, new OnVersioned(object, one))
+            .withProgram(second, new OnVersioned(object, two))
+            .withProgram(first, new OnDefault(object))
+            .execute(new FakeMaven.Discover())
+            .foreignTojos();
+        MatcherAssert.assertThat(
+            String.format(
+                "Tojos should contained 3 similar objects %s: 2 with different hashes %s and one without; but they didn't",
+                string,
+                Arrays.toString(new String[]{one, three})
+            ),
+            tojos.contains(
+                new OnVersioned(string, one),
+                new OnVersioned(string, three),
+                new OnDefault(string)
+            ),
+            Matchers.is(true)
+        );
+    }
+
+    @Test
     void doesNotDiscoverWithVersions(@TempDir final Path tmp) throws IOException {
         final FakeMaven maven = new FakeMaven(tmp)
             .with("withVersions", false)
             .with("failOnError", false)
-            .with("hashes", new CommitHashesMap.Fake())
             .withVersionedProgram()
             .execute(new FakeMaven.Discover());
-        final ObjectName seq = new OnDefault("org.eolang.seq", "6c6269d");
+        final ObjectName seq = new OnVersioned("org.eolang.seq", "6c6269d");
         MatcherAssert.assertThat(
             String.format(DiscoverMojoTest.SHOULD_NOT, seq),
-            maven.externalTojos().contains(seq),
+            maven.foreignTojos().contains(seq),
             Matchers.is(false)
         );
         MatcherAssert.assertThat(
             String.format(DiscoverMojoTest.SHOULD_NOT, DiscoverMojoTest.TEXT),
-            maven.externalTojos().contains(DiscoverMojoTest.TEXT),
+            maven.foreignTojos().contains(DiscoverMojoTest.TEXT),
             Matchers.is(false)
         );
     }

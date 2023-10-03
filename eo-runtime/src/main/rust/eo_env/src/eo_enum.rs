@@ -28,6 +28,7 @@ pub enum EO {
     EOInt(i64),
     EOString(String),
     EORaw(Box<[u8]>),
+    EOError(String),
 }
 
 impl EO {
@@ -36,7 +37,7 @@ impl EO {
             EO::EOVertex(v) => {
                 let mut res: Vec<u8> = vec![0; 1 + 4];
                 res[0] = 0;
-                res[1..].copy_from_slice(&v.to_le_bytes());
+                res[1..].copy_from_slice(&v.to_be_bytes());
                 res
             }
             EO::EOFloat(x) => {
@@ -51,8 +52,26 @@ impl EO {
                 res[1..].copy_from_slice(&x.to_be_bytes());
                 res
             }
-            EO::EOString(_) => { vec![0xff] }
-            EO::EORaw(_) => { vec![0xff] }
+            EO::EOString(content) => {
+                let content_bytes = content.clone().into_bytes();
+                let mut res: Vec<u8> = vec![0; 1 + content_bytes.len()];
+                res[0] = 3;
+                res[1..].copy_from_slice(&content_bytes);
+                res
+            }
+            EO::EORaw(content) => {
+                let mut res: Vec<u8> = vec![0; 1 + content.len()];
+                res[0] = 4;
+                res[1..].copy_from_slice(&content.to_vec());
+                res
+            }
+            EO::EOError(cause) => {
+                let cause_bytes = cause.clone().into_bytes();
+                let mut res: Vec<u8> = vec![0; 1 + cause_bytes.len()];
+                res[0] = 5;
+                res[1..].copy_from_slice(&cause_bytes);
+                res
+            }
         }
     }
 }

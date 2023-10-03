@@ -42,8 +42,9 @@ import org.eolang.maven.hash.ChRemote;
 import org.eolang.maven.hash.CommitHash;
 import org.eolang.maven.name.ObjectName;
 import org.eolang.maven.name.OnCached;
-import org.eolang.maven.name.OnDefault;
+import org.eolang.maven.name.OnReplaced;
 import org.eolang.maven.name.OnSwap;
+import org.eolang.maven.name.OnVersioned;
 import org.eolang.maven.objectionary.Objectionaries;
 import org.eolang.maven.objectionary.ObjsDefault;
 import org.eolang.maven.tojos.ForeignTojo;
@@ -51,8 +52,8 @@ import org.eolang.maven.util.Rel;
 
 /**
  * Go through all `probe` metas in XMIR files, try to locate the
- * objects pointed by `probe` in Objectionary and if found register them in
- * catalog.
+ * objects pointed by `probe` in Objectionary, and if found, register them in
+ * the catalog.
  * More about the purpose of this Mojo is in
  * <a href="https://github.com/objectionary/eo/issues/1323">this issue</a>.
  *
@@ -85,7 +86,7 @@ public final class ProbeMojo extends SafeMojo {
      * @since 0.29.6
      */
     @SuppressWarnings("PMD.ImmutableField")
-    private CommitHash hsh;
+    private CommitHash hash;
 
     /**
      * Objectionaries.
@@ -98,8 +99,8 @@ public final class ProbeMojo extends SafeMojo {
 
     @Override
     public void exec() throws IOException {
-        if (this.hsh == null) {
-            this.hsh = new ChCached(
+        if (this.hash == null) {
+            this.hash = new ChCached(
                 new ChNarrow(
                     new ChRemote(this.tag)
                 )
@@ -128,7 +129,7 @@ public final class ProbeMojo extends SafeMojo {
                 new ChNarrow(
                     new OnSwap(
                         this.withVersions,
-                        new OnDefault(tojo.identifier(), this.hsh)
+                        new OnVersioned(tojo.identifier(), this.hash)
                     ).hash()
                 )
             ).withProbed(count);
@@ -165,7 +166,10 @@ public final class ProbeMojo extends SafeMojo {
                 obj -> new OnCached(
                     new OnSwap(
                         this.withVersions,
-                        new OnDefault(ProbeMojo.noPrefix(obj), this.hsh)
+                        new OnVersioned(
+                            new OnReplaced(ProbeMojo.noPrefix(obj), this.hashes),
+                            this.hash
+                        )
                     )
                 ),
                 new Filtered<>(

@@ -32,6 +32,11 @@ pub struct EOEnv<'local> {
     java_obj: JObject<'local>
 }
 
+/*
+ * @todo #2442:45min Add correct processing of the return value of functions.
+ *  call_method returns Result<JValueOwned<'local>> which we should not just unwrap.
+ *  We need to check it instead and return None if exception in java side happened.
+*/
 impl<'local> EOEnv<'_> {
     pub fn new(java_env: JNIEnv<'local>, _java_class: JClass<'local>, java_obj: JObject<'local>) -> EOEnv<'local> {
         EOEnv {
@@ -41,33 +46,44 @@ impl<'local> EOEnv<'_> {
         }
     }
 
-    pub fn find(&mut self, att: &str) -> i32 {
-        let jstr = JObject::from(self.java_env.new_string(att).unwrap());
-        self.java_env
-           .call_method(&self.java_obj, "find", "(Ljava/lang/String;)I", &[JValue::from(&jstr)])
-           .unwrap()
-           .i()
-           .unwrap()
+    pub fn find(&mut self, att: &str) -> Option<u32> {
+        let jstr = JObject::from(self.java_env.new_string(att).ok()?);
+        let called = self.java_env
+           .call_method(
+               &self.java_obj,
+               "find",
+               "(Ljava/lang/String;)I",
+               &[JValue::from(&jstr)]
+           );
+        return if called.is_err() {
+            self.java_env.exception_clear().ok()?;
+            None
+        } else {
+            called.unwrap().i().ok().map(|value| value as u32)
+        }
     }
 
     pub fn put(&mut self, v: u32, bytes: &[u8]) -> Option<()> {
-        let jbytes = JObject::from(self.java_env.byte_array_from_slice(bytes).unwrap());
-        match self.java_env
+        let jbytes = JObject::from(
+            self.java_env.byte_array_from_slice(bytes).ok()?
+        );
+        let java_val =  self.java_env
             .call_method(
                 &self.java_obj,
                 "put",
                 "(I[B)V",
                 &[JValue::Int(v as i32), JValue::from(&jbytes)]
-            )
-            .unwrap()
-            .v() {
-            Ok(()) => Some(()),
-            _ => None
+            );
+        return if java_val.is_err() {
+            self.java_env.exception_clear().ok()?;
+            None
+        } else {
+            java_val.unwrap().v().ok()
         }
     }
 
     pub fn bind(&mut self, v1: u32, v2: u32, name: &str) -> Option<()> {
-        match self.java_env
+        let java_val =  self.java_env
             .call_method(
                 &self.java_obj,
                 "bind",
@@ -75,16 +91,21 @@ impl<'local> EOEnv<'_> {
                 &[
                     JValue::Int(v1 as i32),
                     JValue::Int(v2 as i32),
-                    JValue::from(&JObject::from(self.java_env.new_string(name).unwrap()))
+                    JValue::from(
+                        &JObject::from(self.java_env.new_string(name).ok()?)
+                    )
                 ]
-            ).unwrap().v() {
-            Ok(()) => Some(()),
-            _ => None,
-        }
+            );
+        return if java_val.is_err() {
+            self.java_env.exception_clear().ok()?;
+            None
+        } else {
+            java_val.unwrap().v().ok()
+        };
     }
 
     pub fn copy(&mut self, v: u32) -> Option<u32> {
-        match self.java_env
+        let java_val = self.java_env
             .call_method(
                 &self.java_obj,
                 "copy",
@@ -92,15 +113,17 @@ impl<'local> EOEnv<'_> {
                 &[
                     JValue::Int(v as i32),
                 ]
-            ).unwrap().i() {
-            Ok(ret) => Some(ret.try_into().unwrap()),
-            _ => None,
-        }
+            );
+        return if java_val.is_err() {
+            self.java_env.exception_clear().ok()?;
+            None
+        } else {
+            java_val.unwrap().i().ok().map(|x| x as u32)
+        };
     }
 
-    pub fn dataize(&mut self, v: u32) -> Option<Vec<i8>> {
-        let java_array = JByteArray::from(
-            self.java_env
+    pub fn dataize(&mut self, v: u32) -> Option<Vec<u8>> {
+        let called = self.java_env
             .call_method(
                 &self.java_obj,
                 "dataize",
@@ -108,12 +131,19 @@ impl<'local> EOEnv<'_> {
                 &[
                     JValue::Int(v as i32),
                 ]
-            ).unwrap().l().unwrap());
-        let size = self.java_env.get_array_length(&java_array).unwrap();
-        let mut bytes = vec![0; size.try_into().unwrap()];
+            );
+        if called.is_err() {
+            self.java_env.exception_clear().ok()?;
+            return None;
+        }
+        let java_array = JByteArray::from(
+            called.unwrap().l().ok()?);
+        let size = self.java_env.get_array_length(&java_array).ok()?;
+        let mut bytes = vec![0; size.try_into().ok()?];
         if self.java_env.get_byte_array_region(&java_array, 0, &mut bytes[0..]).is_err() {
             return None;
         }
-        return Some(bytes);
+        let unsigned = unsafe { &*(&bytes[0..] as *const _  as *const [u8]) };
+        return Some(unsigned.to_vec());
     }
 }

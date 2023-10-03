@@ -31,6 +31,7 @@ import com.yegor256.tojos.Tojo;
 import com.yegor256.tojos.Tojos;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.Predicate;
@@ -125,6 +126,25 @@ public final class ForeignTojos implements Closeable {
     }
 
     /**
+     * Find tojo by tojo id.
+     * @param id The id of the tojo.
+     * @return The tojo.
+     */
+    public ForeignTojo find(final String id) {
+        return new ForeignTojo(
+            this.tojos.value()
+                .select(tojo -> tojo.get(Attribute.ID.key()).equals(id))
+                .stream()
+                .findFirst()
+                .orElseThrow(
+                    () -> new IllegalArgumentException(
+                        String.format("Tojo '%s' not found", id)
+                    )
+                )
+        );
+    }
+
+    /**
      * Get the tojos that are not discovered yet.
      * @return The tojos.
      */
@@ -210,12 +230,12 @@ public final class ForeignTojos implements Closeable {
     }
 
     /**
-     * Check if the tojos contains a foreign tojo with object name.
+     * Check if the tojos contains a foreign tojos with object name.
      * @param name The name of the tojo.
      * @return True if tojo exists.
      */
-    public boolean contains(final ObjectName name) {
-        return this.contains(name.toString());
+    public boolean contains(final ObjectName... name) {
+        return Arrays.stream(name).map(Object::toString).allMatch(this::contains);
     }
 
     /**
@@ -314,7 +334,25 @@ public final class ForeignTojos implements Closeable {
         DISCOVERED_AT("discovered-at"),
 
         /**
-         * Probed.
+         * How many objects were probed in the tojo.
+         * Let's consider the next eo code:
+         * <p>
+         * {@code
+         * [] > main
+         *   QQ.io.stdout > @
+         *     QQ.txt.sprintf "I am %d years old"
+         *       plus.
+         *         1337
+         *         228
+         * }
+         * </p>
+         * <p>In this code there are 5 objects that were probed:</p>
+         *  - "org.eolang"
+         *  - "org.eolang.io"
+         *  - "org.eolang.txt"
+         *  - "org.eolang.io.stdout"
+         *  - "org.eolang.txt.sprintf"
+         * <p>For more info see {@link org.eolang.maven.ProbeMojo}. </p>
          */
         PROBED("probed"),
 
@@ -325,6 +363,7 @@ public final class ForeignTojos implements Closeable {
 
         /**
          * Hash.
+         * Object version hash from git.
          */
         HASH("hash"),
 

@@ -26,41 +26,23 @@ package org.eolang.maven.name;
 import org.eolang.maven.hash.CommitHash;
 
 /**
- * Object name with default hash.
+ * Default object name that just split given raw string to name and hash.
  *
- * @since 0.29.6
+ * @since 0.31.0
  */
 public final class OnDefault implements ObjectName {
 
     /**
-     * Object with or without hash.
+     * Raw string.
      */
-    private final String object;
-
-    /**
-     * Default hash.
-     */
-    private final CommitHash hsh;
+    private final String raw;
 
     /**
      * Ctor.
-     * Please use the constructor for tests only because it can't guarantee
-     * that {@code hash} is actually hash but not a random string.
-     * @param object Object full name with a version or not.
-     * @param hash Default hash is a version in full name is absent.
+     * @param object Object name with hash.
      */
-    public OnDefault(final String object, final String hash) {
-        this(object, new CommitHash.ChConstant(hash));
-    }
-
-    /**
-     * Ctor.
-     * @param object Object full name with a version or not.
-     * @param def Default hash if a version in full name is absent.
-     */
-    public OnDefault(final String object, final CommitHash def) {
-        this.object = object;
-        this.hsh = def;
+    public OnDefault(final String object) {
+        this.raw = object;
     }
 
     @Override
@@ -75,22 +57,14 @@ public final class OnDefault implements ObjectName {
 
     @Override
     public String toString() {
-        return String.join(
-            OnVersioned.DELIMITER,
-            this.split()[0],
-            this.split()[1]
-        );
+        return this.raw;
     }
 
     /**
-     * Split a given object.
-     * @return Split object to name and hash.
+     * Split raw to name and hash.
+     * @return Split raw
      */
     private String[] split() {
-        String[] splt = this.object.split(OnVersioned.DELIMITER);
-        if (splt.length == 1) {
-            splt = new String[]{splt[0], this.hsh.value()};
-        }
-        return splt;
+        return this.raw.split(String.format("\\%s", OnReplaced.DELIMITER));
     }
 }

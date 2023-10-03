@@ -41,6 +41,7 @@ import org.eolang.PhWith;
 import org.eolang.Phi;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -121,7 +122,7 @@ final class EOboolEOwhileTest {
         MatcherAssert.assertThat(
             new Dataized(
                 new PhWith(
-                    new PhCopy(new PhMethod(toggle, "while")),
+                    toggle.attr("as-bool").get().attr("while").get().copy(),
                     0, new Kid(Phi.Φ, toggle)
                 )
             ).take(),
@@ -131,8 +132,7 @@ final class EOboolEOwhileTest {
 
     @Test
     void dataizesComplexBooleanToggle() {
-        final Phi parent = new Parent(Phi.Φ);
-        final Phi toggle = new PhMethod(parent, "toggle");
+        final Phi toggle = new PhMethod(new Parent(Phi.Φ), "toggle");
         new Dataized(
             new PhWith(
                 new PhMethod(toggle, "write"),
@@ -171,7 +171,7 @@ final class EOboolEOwhileTest {
                 "toggle",
                 new AtComposite(
                     this,
-                    self -> new EOmemory(self)
+                    EOmemory::new
                 )
             );
         }
