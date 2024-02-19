@@ -4,5 +4,5 @@ import java.util.List;
 
 public class Root implements Node {
 
-    List<Named> objects;
+    List<BoundAttribute> objects;
 }
