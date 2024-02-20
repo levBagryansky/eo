@@ -11,10 +11,14 @@ public class DotNotation extends Expression {
 
     @Override public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(".").append(right.toString());
-        final String[] lines = left.toString().split("\n");
-        for (final String line: lines) {
+        final String[] rightLines = right.toString().split("\n");
+        builder.append(".").append(rightLines[0]);
+        final String[] leftLines = left.toString().split("\n");
+        for (final String line: leftLines) {
             builder.append("\n").append("  ").append(line);
+        }
+        for (int i = 1; i < rightLines.length; i++) {
+            builder.append("\n").append(rightLines[i]);
         }
         return builder.toString();
     }
