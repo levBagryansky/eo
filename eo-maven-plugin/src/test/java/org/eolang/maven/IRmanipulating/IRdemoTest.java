@@ -12,6 +12,25 @@ public class IRdemoTest {
         final IRBuilder builder = new IRSimpleBuilder();
         builder.with("world", new Abstraction(new ArrayList<>(), new ArrayList<>()));
         final Link world = builder.getLinkTo("world");
+        builder.with(
+            "person",
+            new Abstraction(
+                new ArrayList<>(),
+                new ListOf<>(
+                    new BoundAttribute("@", world)
+                )
+            )
+        );
+        IR ir = builder.build();
+        System.out.println(ir);
+        System.out.println();
+    }
+
+    @Test
+    void romanKorostinskiy() {
+        final IRBuilder builder = new IRSimpleBuilder();
+        builder.with("world", new Abstraction(new ArrayList<>(), new ArrayList<>()));
+        final Link world = builder.getLinkTo("world");
         builder.with("obj1", new Abstraction(new ArrayList<>(), new ArrayList<>()));
         final Link obj1 = builder.getLinkTo("obj1");
         builder.with("obj2", new Abstraction(new ArrayList<>(), new ArrayList<>()));

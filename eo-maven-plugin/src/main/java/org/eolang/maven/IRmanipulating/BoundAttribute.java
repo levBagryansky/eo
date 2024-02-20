@@ -21,7 +21,7 @@ public class BoundAttribute implements Attribute {
         builder.append(left[0]).append(" > ").append(name).append("\n");
         if (left.length > 1) {
             for (int i = 1; i < left.length; i++) {
-                builder.append("  ").append(left[i]).append("\n");
+                builder.append("").append(left[i]).append("\n");
             }
         }
         return builder.deleteCharAt(builder.length()-1).toString();

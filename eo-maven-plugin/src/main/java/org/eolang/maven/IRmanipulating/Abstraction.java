@@ -24,7 +24,7 @@ public class Abstraction extends Expression {
         bounds.forEach(att -> {
             final String[] lines = att.toString().split("\n");
             for (final String line : lines) {
-                builder.append("").append(line).append("\n");
+                builder.append("  ").append(line).append("\n");
             }
         });
         return builder.deleteCharAt(builder.length()-1).toString();
