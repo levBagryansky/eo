@@ -9,7 +9,7 @@ public class IRdemoTest {
 
     @Test
     void buildsSimpleEO() {
-        final IRBuilder builder = new IRBuilder();
+        final IRBuilder builder = new IRSimpleBuilder();
         builder.with("world", new Abstraction(new ArrayList<>(), new ArrayList<>()));
         final Link world = builder.getLinkTo("world");
         builder.with(
