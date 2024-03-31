@@ -161,7 +161,7 @@ SOFTWARE.
     <xsl:value-of select="replace(/program/@source, '\\', '\\\\')"/>
     <xsl:text>")</xsl:text>
     <xsl:value-of select="eo:eol(0)"/>
-    <xsl:text>public final class </xsl:text>
+    <xsl:text>public class </xsl:text>
     <xsl:value-of select="eo:class-name(@name, eo:suffix(@line, @pos))"/>
     <xsl:text> extends PhDefault {</xsl:text>
     <xsl:value-of select="eo:eol(0)"/>
@@ -569,9 +569,11 @@ SOFTWARE.
   <!-- Class for tests -->
   <xsl:template match="class" mode="tests">
     <xsl:value-of select="eo:eol(1)"/>
-    <xsl:text>@Test</xsl:text>
+    <xsl:text>  public static class MyBench {</xsl:text>
+    <xsl:value-of select="eo:eol(2)"/>
+    <xsl:text>@Benchmark @OutputTimeUnit(TimeUnit.NANOSECONDS) @BenchmarkMode(Mode.AverageTime) @Fork(value = 2, warmups = 2)</xsl:text>
     <xsl:value-of select="eo:eol(1)"/>
-    <xsl:text>public void works() throws java.lang.Exception {</xsl:text>
+    <xsl:text>public static void works() throws java.lang.Exception {</xsl:text>
     <xsl:value-of select="eo:eol(2)"/>
     <xsl:choose>
       <xsl:when test="starts-with(@name, 'throws')">
@@ -589,6 +591,8 @@ SOFTWARE.
         </xsl:apply-templates>
       </xsl:otherwise>
     </xsl:choose>
+    <xsl:value-of select="eo:eol(2)"/>
+    <xsl:text>}</xsl:text>
     <xsl:value-of select="eo:eol(1)"/>
     <xsl:text>}</xsl:text>
     <xsl:value-of select="eo:eol(0)"/>
@@ -616,6 +620,8 @@ SOFTWARE.
     <xsl:text>import org.junit.jupiter.api.Assertions;</xsl:text>
     <xsl:value-of select="eo:eol(0)"/>
     <xsl:text>import org.junit.jupiter.api.Test;</xsl:text>
+    <xsl:value-of select="eo:eol(0)"/>
+    <xsl:text>import org.openjdk.jmh.annotations.Benchmark;import org.openjdk.jmh.annotations.BenchmarkMode;import org.openjdk.jmh.annotations.Fork;import org.openjdk.jmh.annotations.Mode;import org.openjdk.jmh.annotations.OutputTimeUnit;import org.openjdk.jmh.infra.Blackhole;import java.util.concurrent.TimeUnit;</xsl:text>
     <xsl:value-of select="eo:eol(0)"/>
   </xsl:template>
   <!-- License with disclaimer  -->
