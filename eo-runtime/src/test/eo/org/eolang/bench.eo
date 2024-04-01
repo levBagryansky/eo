@@ -20,17 +20,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-+architect yegor256@gmail.com
 +home https://github.com/objectionary/eo
 +tests
 +package org.eolang
 +version 0.0.0
 
-# Test.
-[] > just-prints-warning
-  eq. > @
-    cti
-      2.times 2
-      "warning"
-      "This method is deprecated!"
-    4
+# Empty object.
+[] > bench-empty
+  TRUE > @
+
+# Plus.
+[] > bench-plus
+  1.plus 1 > @
+
+
+[] > bench-seq
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int

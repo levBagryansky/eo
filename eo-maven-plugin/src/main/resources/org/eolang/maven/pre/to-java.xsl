@@ -563,11 +563,11 @@ SOFTWARE.
   <!-- Class for tests -->
   <xsl:template match="class" mode="tests">
     <xsl:value-of select="eo:eol(1)"/>
-    <xsl:text>  public static class MyBench {</xsl:text>
-    <xsl:value-of select="eo:eol(2)"/>
-    <xsl:text>@Benchmark @OutputTimeUnit(TimeUnit.NANOSECONDS) @BenchmarkMode(Mode.AverageTime) @Fork(value = 2, warmups = 2)</xsl:text>
+    <xsl:text>public static class MyBench {</xsl:text>
     <xsl:value-of select="eo:eol(1)"/>
-    <xsl:text>public static void works() throws java.lang.Exception {</xsl:text>
+    <xsl:text>@Benchmark @OutputTimeUnit(TimeUnit.NANOSECONDS) @BenchmarkMode(Mode.AverageTime) @Fork(value = 1, warmups = 1 ) @Warmup(iterations  = 8)</xsl:text>
+    <xsl:value-of select="eo:eol(1)"/>
+    <xsl:text>public static void works(final Blackhole blackhole) throws java.lang.Exception {</xsl:text>
     <xsl:value-of select="eo:eol(2)"/>
     <xsl:choose>
       <xsl:when test="starts-with(@name, 'throws')">
@@ -595,19 +595,13 @@ SOFTWARE.
   <xsl:template match="class" mode="assert">
     <xsl:param name="indent"/>
     <xsl:value-of select="eo:tabs($indent)"/>
-    <xsl:text>Object obj = new Dataized(new </xsl:text>
+    <xsl:text>blackhole.consume(</xsl:text>
+    <xsl:value-of select="eo:tabs($indent)"/>
+    <xsl:text>new Dataized(new </xsl:text>
     <xsl:value-of select="eo:class-name(@name, eo:suffix(@line, @pos))"/>
-    <xsl:text>()).take(Boolean.class);</xsl:text>
-    <xsl:value-of select="eo:eol(2 + $indent)"/>
-    <xsl:text>if (obj instanceof String) {</xsl:text>
-    <xsl:value-of select="eo:eol(2 + $indent)"/>
-    <xsl:text>  Assertions.fail(obj.toString());</xsl:text>
-    <xsl:value-of select="eo:eol(2 + $indent)"/>
-    <xsl:text>} else {</xsl:text>
-    <xsl:value-of select="eo:eol(2 + $indent)"/>
-    <xsl:text>  Assertions.assertTrue((Boolean) obj);</xsl:text>
-    <xsl:value-of select="eo:eol(2 + $indent)"/>
-    <xsl:text>}</xsl:text>
+    <xsl:text>()).take()</xsl:text>
+    <xsl:value-of select="eo:tabs($indent)"/>
+    <xsl:text>);</xsl:text>
   </xsl:template>
   <!-- Package -->
   <xsl:template match="meta[head='package']" mode="head">
@@ -623,7 +617,7 @@ SOFTWARE.
     <xsl:value-of select="eo:eol(0)"/>
     <xsl:text>import org.junit.jupiter.api.Test;</xsl:text>
     <xsl:value-of select="eo:eol(0)"/>
-    <xsl:text>import org.openjdk.jmh.annotations.Benchmark;import org.openjdk.jmh.annotations.BenchmarkMode;import org.openjdk.jmh.annotations.Fork;import org.openjdk.jmh.annotations.Mode;import org.openjdk.jmh.annotations.OutputTimeUnit;import org.openjdk.jmh.infra.Blackhole;import java.util.concurrent.TimeUnit;</xsl:text>
+    <xsl:text>import org.openjdk.jmh.annotations.Benchmark;import org.openjdk.jmh.annotations.BenchmarkMode;import org.openjdk.jmh.annotations.Fork;import org.openjdk.jmh.annotations.Mode;import org.openjdk.jmh.annotations.OutputTimeUnit;import org.openjdk.jmh.infra.Blackhole;import java.util.concurrent.TimeUnit;import org.openjdk.jmh.annotations.Warmup;</xsl:text>
     <xsl:value-of select="eo:eol(0)"/>
   </xsl:template>
   <!-- License with disclaimer  -->

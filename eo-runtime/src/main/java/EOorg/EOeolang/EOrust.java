@@ -86,10 +86,10 @@ public final class EOrust extends PhDefault implements Atom {
 
     static {
         try {
-            NAMES = load("target/names");
+            NAMES = load("/home/tardis3/eo/eo-runtime/target/names");
         } catch (final IOException exc) {
             throw new ExFailure(
-                "Cannot read the file target/eo-test/names",
+                "Cannot read the file target/names",
                 exc
             );
         }
