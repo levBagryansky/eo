@@ -109,10 +109,14 @@ public final class EOrust extends PhDefault implements Atom {
                 )
             );
         }
-        final File libs = Paths.get("target")
+        final File libs = Paths.get("/home/tardis3/eo/eo-runtime/target/")
             .resolve("eo-test")
             .resolve("Lib").toFile();
+        if (!libs.exists()) {
+            throw new RuntimeException("libs does not exist");
+        }
         if (libs.isDirectory()) {
+            System.out.println(libs.listFiles().length);
             for (final File subdir : libs.listFiles()) {
                 final Path path = subdir.toPath()
                     .resolve("target")

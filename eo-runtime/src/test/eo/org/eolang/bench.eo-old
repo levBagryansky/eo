@@ -1,3 +1,16 @@
+Benchmark                                       Mode  Cnt           Score          Error  Units
+EOorg.EOeolang.EObench_seq_0Test.MyBench.works  avgt    5     3086369,691 ±   124192,464  ns/op
+EOorg.EOeolang.EObench_seq_1Test.MyBench.works  avgt    5     8436384,295 ±   710267,889  ns/op
+EOorg.EOeolang.EObench_seq_2Test.MyBench.works  avgt    5    20822735,080 ±   714467,756  ns/op
+EOorg.EOeolang.EObench_seq_3Test.MyBench.works  avgt    5    48684637,250 ±  2164573,958  ns/op
+EOorg.EOeolang.EObench_seq_4Test.MyBench.works  avgt    5   114509198,204 ±  3147381,910  ns/op
+EOorg.EOeolang.EObench_seq_6Test.MyBench.works  avgt    5   680405059,867 ± 11201388,022  ns/op
+EOorg.EOeolang.EObench_seq_7Test.MyBench.works  avgt    5  1688204266,567 ± 22317854,777  ns/op
+EOorg.EOeolang.EObench_seq_8Test.MyBench.works  avgt    5  3708694239,200 ± 56237336,813  ns/op
+EOorg.EOeolang.EObench_seq_9Test.MyBench.works  avgt    5  9338514761,300 ± 66221634,871  ns/op
+EOorg.EOeolang.EObench_timesTest.MyBench.works  avgt    5      199490,607 ±    15956,781  ns/op
+
+
 # The MIT License (MIT)
 #
 # Copyright (c) 2016-2024 Objectionary.com
@@ -25,19 +38,18 @@
 +package org.eolang
 +version 0.0.0
 
-## Empty object.
-#[] > bench-empty
-#  TRUE > @
-# Plus.
+# Empty object.
+[] > bench-empty
+  TRUE > @
+ Plus.
 [] > bench-times
   1.times 2 > @
-
-## One action
-#[] > bench-mem-write
-#  memory 1 > mem
-#  mem.write > @
-#    mem.as-int.times 2
-# simple seq
+# One action
+[] > bench-mem-write
+  memory 1 > mem
+  mem.write > @
+    mem.as-int.times 2
+ simple seq
 [] > bench-seq-0
   memory 1 > mem
   seq > @
@@ -107,7 +119,6 @@
         mem.as-int.times 2
       mem.write
         mem.as-int.times 2
-      mem.write
       mem
 
 # simple seq
@@ -186,6 +197,22 @@
         mem.as-int.times 2
       mem.write
         mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem
+ simple seq
+[] > bench-seq-5
+  memory 1 > mem
+  seq > @
+    *
       mem.write
         mem.as-int.times 2
       mem.write
