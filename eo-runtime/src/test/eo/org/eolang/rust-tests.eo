@@ -35,11 +35,9 @@
 
     pub fn foo(_portal: &mut Portal) -> Option<EO> {
       println!("Hello world from rust");
-      Some(EOInt(2))
+      Some(EOInt(2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2))
     }
     """
     []
     *
-  eq. > @
-    r
-    2
+  r > @

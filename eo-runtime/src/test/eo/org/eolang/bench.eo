@@ -25,18 +25,175 @@
 +package org.eolang
 +version 0.0.0
 
-# Empty object.
-[] > bench-empty
-  TRUE > @
-
+## Empty object.
+#[] > bench-empty
+#  TRUE > @
 # Plus.
-[] > bench-plus
-  1.plus 1 > @
+[] > bench-times
+  1.times 2 > @
 
+## One action
+#[] > bench-mem-write
+#  memory 1 > mem
+#  mem.write > @
+#    mem.as-int.times 2
+# simple seq
+[] > bench-seq-0
+  memory 1 > mem
+  seq > @
+    *
+      mem
 
-[] > bench-seq
+# simple seq
+[] > bench-seq-1
   memory 1 > mem
   seq > @
     *
       mem.write
-        mem.as-int
+        mem.as-int.times 2
+      mem
+
+# simple seq
+[] > bench-seq-2
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem
+
+# simple seq
+[] > bench-seq-3
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem
+
+# simple seq
+[] > bench-seq-4
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem
+
+# simple seq
+[] > bench-seq-5
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+      mem
+
+# simple seq
+[] > bench-seq-6
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem
+
+# simple seq
+[] > bench-seq-7
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem
+
+# simple seq
+[] > bench-seq-8
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem
+
+# simple seq
+[] > bench-seq-9
+  memory 1 > mem
+  seq > @
+    *
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem.write
+        mem.as-int.times 2
+      mem

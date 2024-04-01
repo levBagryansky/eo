@@ -565,7 +565,7 @@ SOFTWARE.
     <xsl:value-of select="eo:eol(1)"/>
     <xsl:text>public static class MyBench {</xsl:text>
     <xsl:value-of select="eo:eol(1)"/>
-    <xsl:text>@Benchmark @OutputTimeUnit(TimeUnit.NANOSECONDS) @BenchmarkMode(Mode.AverageTime) @Fork(value = 1, warmups = 1 ) @Warmup(iterations  = 8)</xsl:text>
+    <xsl:text>@Benchmark @OutputTimeUnit(TimeUnit.NANOSECONDS) @BenchmarkMode(Mode.AverageTime) @Fork(value = 1, warmups = 1 ) @Warmup(iterations  = 2)</xsl:text>
     <xsl:value-of select="eo:eol(1)"/>
     <xsl:text>public static void works(final Blackhole blackhole) throws java.lang.Exception {</xsl:text>
     <xsl:value-of select="eo:eol(2)"/>
