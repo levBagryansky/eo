@@ -41,7 +41,7 @@ EOorg.EOeolang.EObench_timesTest.MyBench.works  avgt    5      199490,607 ±    
 # Empty object.
 [] > bench-empty
   TRUE > @
- Plus.
+
 [] > bench-times
   1.times 2 > @
 # One action
