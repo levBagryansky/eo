@@ -73,34 +73,7 @@ public final class UniverseDefault implements Universe {
 
     @Override
     public int find(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException(
-                "Argument name is null"
-            );
-        }
-        Phi accum;
-        final String[] atts = UniverseDefault.replace(name)
-            .split("\\.");
-        if ("Q".equals(atts[0])) {
-            accum = Phi.Φ;
-        } else if ("$".equals(atts[0])) {
-            accum = this.connector;
-        } else {
-            throw new ExFailure(
-                String.format(
-                    "Universe.find starts with %s, but it should start with Q or $ only",
-                    atts[0]
-                )
-            );
-        }
-        atts[0] = "";
-        for (final String att: atts) {
-            if (!"".equals(att)) {
-                accum = accum.attr(att).get();
-            }
-        }
-        this.indexed.putIfAbsent(accum.hashCode(), accum);
-        return accum.hashCode();
+        return 0;
     }
 
     @Override
