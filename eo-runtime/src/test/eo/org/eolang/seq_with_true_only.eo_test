@@ -1,0 +1,135 @@
+Benchmark                                                Mode  Cnt          Score          Error  Units
+EOorg.EOeolang.EOseq_with_true_only_0Test.MyBench.works  avgt    5     118386,196 ±    12239,788  ns/op
+EOorg.EOeolang.EOseq_with_true_only_1Test.MyBench.works  avgt    5    2824482,096 ±   161499,031  ns/op
+EOorg.EOeolang.EOseq_with_true_only_2Test.MyBench.works  avgt    5    6578579,283 ±   604637,390  ns/op
+EOorg.EOeolang.EOseq_with_true_only_3Test.MyBench.works  avgt    5   12517500,443 ±   706797,193  ns/op
+EOorg.EOeolang.EOseq_with_true_only_4Test.MyBench.works  avgt    5   22358202,696 ±   810747,013  ns/op
+EOorg.EOeolang.EOseq_with_true_only_5Test.MyBench.works  avgt    5   39899999,647 ±  1059275,178  ns/op
+EOorg.EOeolang.EOseq_with_true_only_6Test.MyBench.works  avgt    5   70535093,791 ±  2342693,395  ns/op
+EOorg.EOeolang.EOseq_with_true_only_7Test.MyBench.works  avgt    5  139509188,850 ±  2537173,996  ns/op
+EOorg.EOeolang.EOseq_with_true_only_8Test.MyBench.works  avgt    5  287565155,765 ± 10796016,959  ns/op
+EOorg.EOeolang.EOseq_with_true_only_9Test.MyBench.works  avgt    5  572116654,711 ±  4088198,904  ns/op
+
+
+
+# The MIT License (MIT)
+#
+# Copyright (c) 2016-2024 Objectionary.com
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
++home https://github.com/objectionary/eo
++tests
++package org.eolang
++version 0.0.0
+
+# Simple seq
+[] > seq-with-true-only-0
+  seq > @
+    *
+
+# Simple seq
+[] > seq-with-true-only-1
+  seq > @
+    *
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-2
+  seq > @
+    *
+      TRUE
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-3
+  seq > @
+    *
+      TRUE
+      TRUE
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-4
+  seq > @
+    *
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-5
+  seq > @
+    *
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-6
+  seq > @
+    *
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-7
+  seq > @
+    *
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-8
+  seq > @
+    *
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+
+# Simple seq
+[] > seq-with-true-only-9
+  seq > @
+    *
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE
+      TRUE

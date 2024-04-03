@@ -1,0 +1,350 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2016-2024 Objectionary.com
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
++home https://github.com/objectionary/eo
++tests
++package org.eolang
++version 0.0.0
+
+# Bench to check time without out calling.
+#Benchmark                                                   Mode  Cnt       Score       Error  Units
+#EOorg.EOeolang.EOrust_find_returns_int_0Test.MyBench.works  avgt    5  514884,754 ± 65684,483  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_1Test.MyBench.works  avgt    5  594319,999 ± 59965,722  ns/op
+#
+#Benchmark                                                     Mode  Cnt        Score        Error  Units
+#EOorg.EOeolang.EOrust_find_returns_int_0Test.MyBench.works    avgt    5   497233,943 ±  13181,290  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_1Test.MyBench.works    avgt    5   585851,115 ±  23273,203  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_10Test.MyBench.works   avgt    5   826086,884 ±  21290,861  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_20Test.MyBench.works   avgt    5  1046554,186 ±  23286,673  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_30Test.MyBench.works   avgt    5  1317350,515 ±  17791,010  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_40Test.MyBench.works   avgt    5  1555367,563 ±  26744,477  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_50Test.MyBench.works   avgt    5  1674153,195 ±  24622,937  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_60Test.MyBench.works   avgt    5  1875188,719 ±  16663,658  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_70Test.MyBench.works   avgt    5  2284836,054 ±  70246,032  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_80Test.MyBench.works   avgt    5  2482667,699 ±   9449,537  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_90Test.MyBench.works   avgt    5  2741943,294 ±  54004,967  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_100Test.MyBench.works  avgt    5  2938028,659 ± 153008,059  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_200Test.MyBench.works  avgt    5  5193335,526 ±  64964,657  ns/op
+#EOorg.EOeolang.EOrust_find_returns_int_300Test.MyBench.works  avgt    5  7592924,827 ±  39542,408  ns/op
+
+# Empty object.
+[] > bench-empty
+  TRUE > @
+
+#Process finished with exit code 0
+[] > rust-find-returns-int-0
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+      Some(
+        EOInt(0 as i64)
+      )
+    }
+    """
+    []
+    *
+  r > @
+
+# Empty object: 40,970 мкс
+[] > bench-empty
+  TRUE > @
+
+# Empty Rust insert: 497,233 мкс
+[] > rust-find-returns-int-0
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+      Some(
+        EOInt(0 as i64)
+      )
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-1
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+
+      Some(
+        EOInt(portal.find("$.&.a")? as i64)
+      )
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-10
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..10 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-20
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..20 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-30
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..30 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-40
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..40 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-50
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..50 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-60
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..60 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-70
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..70 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-80
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..80 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-90
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..90 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-100
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..100 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-200
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..200 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
+
+# Bench to check time of out calling.
+[] > rust-find-returns-int-300
+  123 > a
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+        for i in 0..300 {
+            portal.find("$.^.x")?;
+        }
+        return Some(EOInt(0));
+    }
+    """
+    []
+    *
+  r > @
