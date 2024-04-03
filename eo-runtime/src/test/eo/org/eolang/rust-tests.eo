@@ -46,34 +46,24 @@
 #EOorg.EOeolang.EOrust_find_returns_int_200Test.MyBench.works  avgt    5  5193335,526 ±  64964,657  ns/op
 #EOorg.EOeolang.EOrust_find_returns_int_300Test.MyBench.works  avgt    5  7592924,827 ±  39542,408  ns/op
 #Process finished with exit code 0
-#
-## Empty object: 41,711 мкс
-#[] > bench-empty
-#  TRUE > @
-#
-## Empty rust call : 514,548 мкс
-#[] > rust-find-returns-int-0
-#  QQ.rust > r
-#    """
-#    use eo::Portal;
-#    use eo::eo_enum::EO;
-#    use eo::eo_enum::EO::{EOInt};
-#
-#    pub fn foo(portal: &mut Portal) -> Option<EO> {
-#      Some(
-#        EOInt(0 as i64)
-#      )
-#    }
-#    """
-#    []
-#    *
-#  r > @
-# Simple seq
-[] > seq-with-true-only-5
-  seq > @
+# Empty object: 66,721 мкс
+[] > bench-empty
+  0 > @
+
+# Empty rust call : 498,561 мкс
+[] > rust-find-returns-int-0
+  QQ.rust > r
+    """
+    use eo::Portal;
+    use eo::eo_enum::EO;
+    use eo::eo_enum::EO::{EOInt};
+
+    pub fn foo(portal: &mut Portal) -> Option<EO> {
+      Some(
+        EOInt(0 as i64)
+      )
+    }
+    """
+    []
     *
-      TRUE
-      TRUE
-      TRUE
-      TRUE
-      TRUE
+  r > @
